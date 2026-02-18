@@ -317,6 +317,135 @@
   }
   .preview-send:hover { background:var(--accent); }
 
+  /* ══════════════════════════════════════
+     7-DAY CARE ROUTINE CARD
+  ══════════════════════════════════════ */
+  .routine-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 10px;
+    overflow: hidden;
+    animation: fadeSlideIn 0.4s ease 0.1s both;
+  }
+  .routine-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, rgba(78,207,98,0.08), transparent);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .routine-header:hover { background: linear-gradient(90deg, rgba(78,207,98,0.14), transparent); }
+  .routine-header-left { display:flex; align-items:center; gap:9px; }
+  .routine-icon-wrap {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .routine-title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+  .routine-subtitle { font-size: 0.68rem; color: var(--muted); }
+  .routine-chevron {
+    font-size: 0.75rem; color: var(--accent); transition: transform 0.3s;
+    width: 22px; height: 22px; display:flex; align-items:center; justify-content:center;
+    border-radius: 50%; border: 1px solid rgba(78,207,98,0.25);
+  }
+  .routine-chevron.open { transform: rotate(180deg); }
+
+  .routine-body { display:none; }
+  .routine-body.open { display:block; }
+
+  .day-grid { display: grid; grid-template-columns: 1fr; }
+  .day-row {
+    display: flex; align-items: center; gap: 11px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .day-row:last-child { border-bottom: none; }
+  .day-row::after {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0; background: rgba(78,207,98,0.04);
+    transition: width 0.4s;
+  }
+  .day-row.done::after { width: 100%; }
+
+  .day-number {
+    min-width: 30px; height: 30px; border-radius: 50%;
+    background: var(--border); display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 0.62rem; font-weight: 700;
+    color: var(--muted); flex-shrink: 0; transition: all 0.25s; position: relative; z-index: 1;
+  }
+  .day-row.today .day-number {
+    background: var(--accent2); color: #fff;
+    box-shadow: 0 0 12px rgba(78,207,98,0.4);
+  }
+  .day-row.done .day-number {
+    background: rgba(78,207,98,0.18); color: var(--accent);
+  }
+
+  .day-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
+  .day-title {
+    font-size: 0.79rem; font-weight: 600; color: var(--text); margin-bottom: 1px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .day-row.done .day-title { text-decoration: line-through; opacity: 0.6; }
+  .day-desc { font-size: 0.71rem; color: var(--muted); line-height: 1.4; }
+
+  .day-tag {
+    font-size: 0.59rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    padding: 2px 7px; border-radius: 4px; flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .day-tag.spray { background: rgba(78,207,98,0.12); color: var(--accent); }
+  .day-tag.observe { background: rgba(232,197,71,0.12); color: var(--warn); }
+  .day-tag.rest { background: rgba(126,200,227,0.12); color: #7ec8e3; }
+  .day-tag.treat { background: rgba(232,96,96,0.12); color: var(--danger); }
+  .day-tag.water { background: rgba(100,160,255,0.12); color: #82b8ff; }
+
+  .day-check {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid var(--border); flex-shrink: 0;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; position: relative; z-index: 1;
+  }
+  .day-check:hover { border-color: var(--accent); }
+  .day-row.done .day-check {
+    background: var(--accent2); border-color: var(--accent2); color: #fff;
+  }
+
+  .routine-footer {
+    padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.06);
+  }
+  body.light .routine-footer { background: rgba(0,0,0,0.02); }
+  .routine-progress-wrap { flex: 1; margin-right: 12px; }
+  .routine-progress-label {
+    font-size: 0.67rem; color: var(--muted); margin-bottom: 5px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .routine-progress-label span:last-child { color: var(--accent); font-weight: 600; }
+  .routine-progress-track { height: 5px; background: var(--border); border-radius: 5px; overflow: hidden; }
+  .routine-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 5px; transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+  .routine-reset-btn {
+    font-size: 0.67rem; color: var(--muted); cursor: pointer; padding: 4px 10px;
+    border-radius: 6px; border: 1px solid var(--border); background: transparent;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s; flex-shrink: 0;
+  }
+  .routine-reset-btn:hover { color: var(--danger); border-color: rgba(232,96,96,0.5); }
+
+  /* Today badge */
+  .today-badge {
+    font-size: 0.58rem; background: var(--accent2); color: #fff;
+    padding: 1px 5px; border-radius: 3px; font-weight: 700; letter-spacing: 0.04em;
+  }
+
   ::-webkit-scrollbar { width:4px; }
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
@@ -348,7 +477,6 @@
       box-shadow: -4px 0 24px rgba(0,0,0,0.4);
     }
 
-    /* Backdrop when panel open */
     .panel-backdrop {
       display: none;
       position: absolute; inset: 0;
@@ -365,31 +493,17 @@
 
   /* ════════════════════════════════════
      RESPONSIVE — MOBILE (≤600px)
-     Bottom nav bar, full screen panels,
-     compact header
   ════════════════════════════════════ */
   @media (max-width: 600px) {
     body { height: 100dvh; }
-
-    nav {
-      padding: 0 12px;
-      height: 52px;
-    }
+    nav { padding: 0 12px; height: 52px; }
     .logo { font-size: 1.1rem; gap: 8px; }
     .logo-icon { width: 30px; height: 30px; font-size: 1rem; }
     .nav-btn.outline:not(.icon-only) { display: none; }
     .nav-btn.primary { display: none; }
-
-    /* App body shrinks to leave room for bottom bar */
-    .app-body {
-      padding-bottom: 60px;
-    }
-
-    /* Full-width panels on mobile */
+    .app-body { padding-bottom: 60px; }
     .panel.open { width: 100vw !important; }
     .panel-inner { width: 100vw; }
-
-    /* Bottom navigation bar */
     .bottom-nav {
       display: flex !important;
       position: fixed;
@@ -416,36 +530,23 @@
     .bottom-nav-btn .bnav-icon { font-size: 1.3rem; line-height: 1; }
     .bottom-nav-btn:hover,
     .bottom-nav-btn.active { color: var(--accent); border-top-color: var(--accent); }
-
-    /* Compact chat */
     .chat-messages { padding: 12px; gap: 12px; }
     .chat-header { padding: 10px 12px; gap: 10px; }
     .ai-avatar { width: 34px; height: 34px; font-size: 0.95rem; }
     .chat-title { font-size: 0.9rem; }
     .chat-subtitle { display: none; }
     .chat-header > div:last-child { display: none; }
-
-    /* Compact input area */
     .chat-input-area { padding: 10px 12px; }
     .upload-btn-big { padding: 10px 18px; font-size: 0.82rem; }
-
-    /* Bubbles full width */
     .msg-bubble { max-width: 88%; font-size: 0.84rem; padding: 10px 13px; }
     .msg-actions { padding-left: 36px; }
-
-    /* Compact upload preview */
     .upload-preview { flex-wrap: wrap; }
     .preview-info { min-width: 0; }
     .preview-name { font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
   }
 
-  /* Bottom nav hidden on desktop/tablet by default */
   .bottom-nav { display: none; }
 
-  /* ════════════════════════════════════
-     RESPONSIVE — LARGE DESKTOP (≥1280px)
-     Wider panels
-  ════════════════════════════════════ */
   @media (min-width: 1280px) {
     .panel.open { width: 340px; }
     .panel-inner { width: 340px; }
@@ -491,7 +592,6 @@
   .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   .modal-footer { padding: 12px 16px; border-top: 1px solid var(--border); display:flex; gap:8px; flex-shrink:0; }
 
-  /* History modal */
   .history-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:0.85rem; }
   .history-empty .empty-icon { font-size:2.5rem; margin-bottom:10px; }
   .history-item {
@@ -522,7 +622,6 @@
   .modal-action-btn.primary { background: var(--accent2); color: #fff; border-color: var(--accent2); }
   .modal-action-btn.primary:hover { background: var(--accent); border-color: var(--accent); }
 
-  /* Translate modal */
   .lang-option {
     display: flex; align-items: center; gap: 14px; padding: 14px 16px;
     background: var(--card); border: 2px solid var(--border); border-radius: 12px;
@@ -546,7 +645,6 @@
 <!-- NAV -->
 <nav>
   <div style="display:flex;align-items:center;gap:10px;">
-    <!-- Left panel toggle in nav -->
     <button class="nav-btn outline" id="newsNavBtn" onclick="togglePanel('left')" title="News & Alerts" style="padding:7px 10px;font-size:1rem;">📰</button>
     <div class="logo">
       <div class="logo-icon">
@@ -578,7 +676,6 @@
 <!-- APP BODY -->
 <div class="app-body">
 
-  <!-- Panel backdrop (mobile/tablet overlay) -->
   <div class="panel-backdrop" id="panelBackdrop" onclick="closeAllPanels()"></div>
 
   <!-- LEFT PANEL: NEWS & ALERTS -->
@@ -588,8 +685,6 @@
         <span class="sidebar-title">📰 Crop News & Alerts</span>
         <span class="tag-pill active">Live</span>
       </div>
-
-      <!-- Slideshow -->
       <div class="slideshow-wrap">
         <div class="slides" id="slides"></div>
         <div class="slide-arrows">
@@ -598,8 +693,6 @@
         </div>
       </div>
       <div class="slide-dots" id="slideDots"></div>
-
-      <!-- Filter + List -->
       <div class="news-filter">
         <span class="tag-pill active" onclick="filterNews(this,'all')">All</span>
         <span class="tag-pill inactive" onclick="filterNews(this,'disease')">Disease</span>
@@ -701,11 +794,7 @@ function isMobileTablet() { return window.innerWidth <= 900; }
 function togglePanel(side) {
   const panel = document.getElementById('panelLeft');
   const backdrop = document.getElementById('panelBackdrop');
-  const isOpening = !panel.classList.contains('open');
-
   panel.classList.toggle('open');
-
-  // Show/hide backdrop on tablet/mobile
   if (isMobileTablet()) {
     backdrop.classList.toggle('show', panel.classList.contains('open'));
   }
@@ -715,12 +804,9 @@ function togglePanelMobile(side) {
   const panel = document.getElementById('panelLeft');
   const isOpening = !panel.classList.contains('open');
   togglePanel(side);
-  // Update bottom nav active states
   document.getElementById('bnavNews').classList.toggle('active', isOpening);
   document.getElementById('bnavChat').classList.toggle('active', false);
-  if (!isOpening) {
-    document.getElementById('bnavChat').classList.add('active');
-  }
+  if (!isOpening) document.getElementById('bnavChat').classList.add('active');
 }
 
 function closePanelMobileGoChat() {
@@ -751,7 +837,7 @@ const newsItems = [
 ];
 
 // ═══════════════════════════════════════
-// SLIDESHOW (top 4 items)
+// SLIDESHOW
 // ═══════════════════════════════════════
 let slideIndex = 0;
 const slideshowItems = newsItems.slice(0, 4);
@@ -802,6 +888,181 @@ function filterNews(el, type) {
 }
 
 // ═══════════════════════════════════════
+// 7-DAY CARE ROUTINE
+// ═══════════════════════════════════════
+const ROUTINE_STORAGE_KEY = 'fasal_routine_state';
+
+// Routine data — both languages
+const routineData = {
+  en: [
+    { day:1, title:'First Fungicide Spray',            desc:'Prepare Mancozeb 75% WP at 2g per litre of water. Spray evenly on all affected leaves, front and back. Early morning is best.',                                              tag:'spray',   emoji:'💊', tagLabel:'spray'   },
+    { day:2, title:'Inspect & Remove Infected Leaves', desc:'Carefully remove heavily spotted or yellowing leaves. Bag and dispose away from field. Do not compost infected material.',                                                    tag:'treat',   emoji:'🍃', tagLabel:'treat'   },
+    { day:3, title:'Rest & Monitor Humidity',          desc:'Let the fungicide settle. Avoid overhead irrigation today. Check soil moisture and ensure good drainage around plants.',                                                       tag:'rest',    emoji:'🌤️', tagLabel:'rest'    },
+    { day:4, title:'Second Fungicide Spray',           desc:'Repeat Mancozeb spray at 2g/L. Check for new spots. If worsening, add Carbendazim 50% WP at 1g/L to the mix.',                                                              tag:'spray',   emoji:'💊', tagLabel:'spray'   },
+    { day:5, title:'Foliar Nutrition Boost',           desc:'Apply potassium-rich foliar spray (0.5% K₂SO₄) to strengthen cell walls and boost immunity against fungal spread.',                                                          tag:'observe', emoji:'🌿', tagLabel:'observe' },
+    { day:6, title:'Deep Field Observation',           desc:'Walk the full field. Note any new infection clusters. Check neighbouring crops. Record progress vs Day 1 for comparison.',                                                    tag:'observe', emoji:'🔍', tagLabel:'observe' },
+    { day:7, title:'Final Spray & Review',             desc:'Apply third and final fungicide spray. Assess overall improvement. If >50% recovery seen, treatment is successful.',                                                          tag:'spray',   emoji:'✅', tagLabel:'spray'   },
+  ],
+  hi: [
+    { day:1, title:'पहला फफूंदनाशक छिड़काव',           desc:'मैनकोजेब 75% WP को 2 ग्राम प्रति लीटर पानी में तैयार करें। प्रभावित सभी पत्तियों पर आगे और पीछे से समान रूप से छिड़काव करें। सुबह जल्दी करना सबसे अच्छा है।',        tag:'spray',   emoji:'💊', tagLabel:'छिड़काव'  },
+    { day:2, title:'संक्रमित पत्तियाँ हटाएं',           desc:'अधिक धब्बेदार या पीली पड़ रही पत्तियों को सावधानी से हटाएं। उन्हें थैले में बंद करके खेत से दूर फेंकें। संक्रमित सामग्री को खाद में न डालें।',                   tag:'treat',   emoji:'🍃', tagLabel:'उपचार'    },
+    { day:3, title:'आराम और नमी की निगरानी',            desc:'फफूंदनाशक को असर करने दें। आज ऊपर से सिंचाई न करें। मिट्टी की नमी जांचें और पौधों के आसपास जल निकासी सुनिश्चित करें।',                                           tag:'rest',    emoji:'🌤️', tagLabel:'आराम'     },
+    { day:4, title:'दूसरा फफूंदनाशक छिड़काव',          desc:'मैनकोजेब का 2g/L पर दोबारा छिड़काव करें। नए धब्बे जांचें। यदि स्थिति बिगड़ रही हो, तो कार्बेन्डाजिम 50% WP को 1g/L की दर से मिलाएं।',                          tag:'spray',   emoji:'💊', tagLabel:'छिड़काव'  },
+    { day:5, title:'पत्तियों पर पोषण बूस्ट',            desc:'पोटेशियम युक्त पर्णीय स्प्रे (0.5% K₂SO₄) लगाएं। इससे कोशिका भित्ति मजबूत होगी और फफूंदी फैलने से रोग-प्रतिरोधक क्षमता बढ़ेगी।',                              tag:'observe', emoji:'🌿', tagLabel:'निरीक्षण' },
+    { day:6, title:'खेत का गहन निरीक्षण',               desc:'पूरे खेत में चलें। नए संक्रमण के समूहों को नोट करें। पड़ोसी फसलों की जांच करें। पहले दिन की तुलना में प्रगति दर्ज करें।',                                       tag:'observe', emoji:'🔍', tagLabel:'निरीक्षण' },
+    { day:7, title:'अंतिम छिड़काव और समीक्षा',          desc:'तीसरा और अंतिम फफूंदनाशक छिड़काव करें। कुल सुधार का मूल्यांकन करें। यदि 50% से अधिक सुधार दिखे, तो उपचार सफल माना जाएगा।',                                   tag:'spray',   emoji:'✅', tagLabel:'छिड़काव'  },
+  ]
+};
+
+// Default routine (English, used for building initial card)
+const defaultRoutine = routineData.en;
+
+let routineState = { done: [], cardId: null };
+
+function loadRoutineState(cardId) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ROUTINE_STORAGE_KEY) || '{}');
+    if (saved.cardId === cardId) return saved;
+  } catch(e) {}
+  return { done: [], cardId };
+}
+
+function saveRoutineState(cardId, done) {
+  try {
+    localStorage.setItem(ROUTINE_STORAGE_KEY, JSON.stringify({ cardId, done }));
+  } catch(e) {}
+}
+
+// Track all rendered routine card IDs so we can re-translate them
+const activeRoutineCardIds = [];
+
+function buildRoutineCard(diagnosisName, lang) {
+  const cardId = 'routine_' + Date.now();
+  routineState = loadRoutineState(cardId);
+  activeRoutineCardIds.push(cardId);
+
+  const days = routineData[lang] || routineData.en;
+  const t = chatTranslations[lang] || chatTranslations.en;
+  const isHi = lang === 'hi';
+
+  const daysHTML = days.map((d, i) => {
+    const isDone = routineState.done.includes(d.day);
+    const isToday = !isDone && routineState.done.length === i;
+    const todayWord = isHi ? 'आज' : 'TODAY';
+    return `
+      <div class="day-row ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}" id="${cardId}_day${d.day}" onclick="toggleDay('${cardId}', ${d.day})">
+        <div class="day-number">${isHi ? 'दि' : 'D'}${d.day}</div>
+        <div class="day-info">
+          <div class="day-title">
+            ${d.emoji} ${d.title}
+            ${isToday ? `<span class="today-badge">${todayWord}</span>` : ''}
+          </div>
+          <div class="day-desc">${d.desc}</div>
+        </div>
+        <span class="day-tag ${d.tag}">${d.tagLabel}</span>
+        <div class="day-check">${isDone ? '✓' : ''}</div>
+      </div>`;
+  }).join('');
+
+  const doneCount = routineState.done.length;
+  const pct = Math.round((doneCount / days.length) * 100);
+  const progressLabel = isHi ? 'स्वास्थ्य लाभ प्रगति' : 'Recovery Progress';
+  const daysWord = isHi ? 'दिन' : 'days';
+  const resetLabel = isHi ? '↺ रीसेट' : '↺ Reset';
+
+  return `
+    <div class="routine-card" id="${cardId}" data-lang="${lang}">
+      <div class="routine-header" onclick="toggleRoutineBody('${cardId}')">
+        <div class="routine-header-left">
+          <div class="routine-icon-wrap">🌱</div>
+          <div>
+            <div class="routine-title">${t.routineTitle}</div>
+            <div class="routine-subtitle">${isHi ? `${t.diagnosisName} के लिए` : `Tailored for ${diagnosisName}`}</div>
+          </div>
+        </div>
+        <div class="routine-chevron open" id="${cardId}_chevron">▼</div>
+      </div>
+      <div class="routine-body open" id="${cardId}_body">
+        <div class="day-grid" id="${cardId}_grid">${daysHTML}</div>
+        <div class="routine-footer">
+          <div class="routine-progress-wrap">
+            <div class="routine-progress-label">
+              <span id="${cardId}_progressLabel">${progressLabel}</span>
+              <span id="${cardId}_pctLabel">${doneCount}/${days.length} ${daysWord} · ${pct}%</span>
+            </div>
+            <div class="routine-progress-track">
+              <div class="routine-progress-fill" id="${cardId}_fill" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <button class="routine-reset-btn" id="${cardId}_resetBtn" onclick="resetRoutine(event,'${cardId}')">${resetLabel}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleRoutineBody(cardId) {
+  const body = document.getElementById(cardId + '_body');
+  const chevron = document.getElementById(cardId + '_chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+function toggleDay(cardId, dayNum) {
+  const state = loadRoutineState(cardId);
+  const idx = state.done.indexOf(dayNum);
+  if (idx > -1) {
+    state.done.splice(idx, 1);
+  } else {
+    state.done.push(dayNum);
+    state.done.sort((a, b) => a - b);
+  }
+  saveRoutineState(cardId, state.done);
+  refreshRoutineUI(cardId, state.done);
+}
+
+function refreshRoutineUI(cardId, done) {
+  const card = document.getElementById(cardId);
+  const lang = card ? (card.dataset.lang || 'en') : 'en';
+  const days = routineData[lang] || routineData.en;
+  const isHi = lang === 'hi';
+  const todayWord = isHi ? 'आज' : 'TODAY';
+
+  days.forEach((d, i) => {
+    const row = document.getElementById(`${cardId}_day${d.day}`);
+    if (!row) return;
+    const isDone = done.includes(d.day);
+    const isToday = !isDone && done.length === i;
+    row.className = `day-row ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}`;
+    const check = row.querySelector('.day-check');
+    if (check) check.textContent = isDone ? '✓' : '';
+    const titleEl = row.querySelector('.day-title');
+    if (titleEl) {
+      const existingBadge = titleEl.querySelector('.today-badge');
+      if (existingBadge) existingBadge.remove();
+      if (isToday) {
+        const badge = document.createElement('span');
+        badge.className = 'today-badge';
+        badge.textContent = todayWord;
+        titleEl.appendChild(badge);
+      }
+    }
+  });
+  const pct = Math.round((done.length / days.length) * 100);
+  const daysWord = isHi ? 'दिन' : 'days';
+  const fill = document.getElementById(cardId + '_fill');
+  const label = document.getElementById(cardId + '_pctLabel');
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = `${done.length}/${days.length} ${daysWord} · ${pct}%`;
+}
+
+function resetRoutine(event, cardId) {
+  event.stopPropagation();
+  if (!confirm('Reset all progress for this routine?')) return;
+  saveRoutineState(cardId, []);
+  refreshRoutineUI(cardId, []);
+}
+
+// ═══════════════════════════════════════
 // CHAT
 // ═══════════════════════════════════════
 let hasImage = false, imageDataURL = null, aiMsgCounter = 0, currentSpeech = null, speakingBtn = null;
@@ -848,8 +1109,23 @@ function appendDiagnosis(diagnosis, bubbleId) {
   if (bubble && diagnosis) {
     const card = document.createElement('div');
     card.className = 'diagnosis-card';
-    card.innerHTML = `<div class="diagnosis-tag">🔬 AI Diagnosis</div><div class="diagnosis-name">${diagnosis.name}</div><div class="diagnosis-detail">${diagnosis.desc}</div><div class="confidence-bar"><span class="conf-label">Confidence</span><div class="conf-track"><div class="conf-fill" style="width:${diagnosis.confidence}%"></div></div><span class="conf-label">${diagnosis.confidence}%</span></div>`;
+    card.innerHTML = `
+      <div class="diagnosis-tag">🔬 AI Diagnosis</div>
+      <div class="diagnosis-name">${diagnosis.name}</div>
+      <div class="diagnosis-detail">${diagnosis.desc}</div>
+      <div class="confidence-bar">
+        <span class="conf-label">Confidence</span>
+        <div class="conf-track"><div class="conf-fill" style="width:${diagnosis.confidence}%"></div></div>
+        <span class="conf-label">${diagnosis.confidence}%</span>
+      </div>`;
     bubble.appendChild(card);
+
+    // ── APPEND 7-DAY ROUTINE CARD ──
+    const routineHTML = buildRoutineCard(diagnosis.name, currentLang);
+    const routineEl = document.createElement('div');
+    routineEl.innerHTML = routineHTML;
+    bubble.appendChild(routineEl.firstElementChild);
+
     document.getElementById('chatMessages').scrollTop = 99999;
   }
 }
@@ -873,7 +1149,12 @@ function appendUserMessage(imgSrc) {
 function submitImage() {
   if (!hasImage) return;
   stopSpeech(); appendUserMessage(imageDataURL); removeUpload(); showTyping();
-  setTimeout(() => { removeTyping(); const resp = responses.image; const id = appendAIMessage(resp.text); if (resp.diagnosis) setTimeout(() => appendDiagnosis(resp.diagnosis, id), 200); }, 1600);
+  setTimeout(() => {
+    removeTyping();
+    const resp = responses.image;
+    const id = appendAIMessage(resp.text);
+    if (resp.diagnosis) setTimeout(() => appendDiagnosis(resp.diagnosis, id), 200);
+  }, 1600);
 }
 
 function handleImageUpload(input) {
@@ -918,7 +1199,6 @@ if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => speechS
 // ═══════════════════════════════════════
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-// Close on backdrop click
 document.querySelectorAll('.modal-overlay').forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
 });
@@ -949,9 +1229,8 @@ function saveCurrentSession() {
   };
   const sessions = getSessions();
   sessions.unshift(session);
-  saveSessions(sessions.slice(0, 20)); // keep max 20
+  saveSessions(sessions.slice(0, 20));
   renderHistoryBody();
-  // Flash save button
   const btn = document.querySelector('#historyModal .modal-action-btn.primary');
   if (btn) { const orig = btn.textContent; btn.textContent = '✓ Saved!'; setTimeout(() => btn.textContent = orig, 1500); }
 }
@@ -999,70 +1278,35 @@ function clearAllHistory() {
 
 function openHistory() {
   renderHistoryBody();
-  // Update modal text for language
   document.getElementById('histModalTitle').textContent = currentLang === 'hi' ? 'चैट इतिहास' : 'Chat History';
   document.getElementById('clearAllBtn').textContent = currentLang === 'hi' ? '🗑 सभी हटाएं' : '🗑 Clear All';
   openModal('historyModal');
 }
 
-// Auto-save on every AI message
-const _origAppendAI = appendAIMessage;
-// We'll patch save into submitImage instead to avoid recursion
-const _origSubmitImage = submitImage;
-
 // ═══════════════════════════════════════
-// TRANSLATE (EN ↔ HI)
+// TRANSLATE
 // ═══════════════════════════════════════
 let currentLang = 'en';
 
 const uiStrings = {
   en: {
-    aiOnline: 'AI Online',
-    langBtn: '🌐 EN / हिन्दी',
-    chatTitle: 'Fasal AI Assistant',
+    aiOnline: 'AI Online', langBtn: '🌐 EN / हिन्दी', chatTitle: 'Fasal AI Assistant',
     chatSubtitle: 'Crop Disease Detection · Treatment Advice · Image Analysis',
-    histBtn: '📋 History',
-    transBtn: '🌍 Translate',
-    historyBtn: '📋 History',
-    uploadBtn: '📸 Upload Crop Photo',
-    analyzeBtn: 'Analyze ➤',
-    previewSize: 'Ready for AI disease analysis',
-    newScan: '+ New Scan',
-    readAloud: '🔊 Read Aloud',
-    stop: '🔈 Stop',
-    transModalTitle: 'Select Language',
-    translateNote: 'Switching language will translate the interface and all chat messages.',
-    transClose: 'Cancel',
-    newsTitle: '📰 Crop News & Alerts',
-    liveTag: 'Live',
-    historyLbl: 'History',
-    translateLbl: 'Translate',
+    histBtn: '📋 History', transBtn: '🌍 Translate', uploadBtn: '📸 Upload Crop Photo',
+    analyzeBtn: 'Analyze ➤', previewSize: 'Ready for AI disease analysis', newScan: '+ New Scan',
+    transModalTitle: 'Select Language', translateNote: 'Switching language will translate the interface and all chat messages.',
+    transClose: 'Cancel', newsTitle: '📰 Crop News & Alerts', liveTag: 'Live',
   },
   hi: {
-    aiOnline: 'AI ऑनलाइन',
-    langBtn: '🌐 हिन्दी / EN',
-    chatTitle: 'फसल AI सहायक',
+    aiOnline: 'AI ऑनलाइन', langBtn: '🌐 हिन्दी / EN', chatTitle: 'फसल AI सहायक',
     chatSubtitle: 'फसल रोग पहचान · उपचार सलाह · छवि विश्लेषण',
-    histBtn: '📋 इतिहास',
-    transBtn: '🌍 भाषा',
-    historyBtn: '📋 इतिहास',
-    uploadBtn: '📸 फसल फोटो अपलोड करें',
-    analyzeBtn: 'विश्लेषण करें ➤',
-    previewSize: 'AI रोग विश्लेषण के लिए तैयार',
-    newScan: '+ नई स्कैन',
-    readAloud: '🔊 जोर से पढ़ें',
-    stop: '🔈 रोकें',
-    transModalTitle: 'भाषा चुनें',
-    translateNote: 'भाषा बदलने से इंटरफ़ेस और सभी संदेश अनुवादित हो जाएंगे।',
-    transClose: 'रद्द करें',
-    newsTitle: '📰 फसल समाचार और अलर्ट',
-    liveTag: 'लाइव',
-    historyLbl: 'इतिहास',
-    translateLbl: 'भाषा',
+    histBtn: '📋 इतिहास', transBtn: '🌍 भाषा', uploadBtn: '📸 फसल फोटो अपलोड करें',
+    analyzeBtn: 'विश्लेषण करें ➤', previewSize: 'AI रोग विश्लेषण के लिए तैयार', newScan: '+ नई स्कैन',
+    transModalTitle: 'भाषा चुनें', translateNote: 'भाषा बदलने से इंटरफ़ेस और सभी संदेश अनुवादित हो जाएंगे।',
+    transClose: 'रद्द करें', newsTitle: '📰 फसल समाचार और अलर्ट', liveTag: 'लाइव',
   }
 };
 
-// Chat message translations (keyed to initial welcome + image response)
 const chatTranslations = {
   en: {
     welcome: `🌱 <strong>Namaste, Farmer!</strong> I'm Fasal AI, your digital crop doctor.<br><br>
@@ -1072,11 +1316,11 @@ const chatTranslations = {
       Tap 📰 for crop news &amp; alerts, or upload a photo below!`,
     imgResponse: "I've scanned your uploaded image using AI disease detection. Here's my diagnosis:",
     userMsg: 'Please analyze this crop image for diseases.',
-    diagnosisTag: '🔬 AI Diagnosis',
-    confidence: 'Confidence',
+    diagnosisTag: '🔬 AI Diagnosis', confidence: 'Confidence',
     diagnosisName: 'Alternaria Leaf Blight',
     diagnosisDesc: 'Brown concentric ring spots on leaves. Common in onion, carrot. Recommend Mancozeb 75% WP at 2g/L water, apply weekly for 3 weeks.',
     langSwitchMsg: `🌐 <strong>Language set to English.</strong> All messages are now in English.`,
+    routineTitle: '7-Day Recovery Routine',
   },
   hi: {
     welcome: `🌱 <strong>नमस्ते, किसान भाई!</strong> मैं फसल AI हूँ, आपका डिजिटल फसल डॉक्टर।<br><br>
@@ -1086,303 +1330,183 @@ const chatTranslations = {
       📰 समाचार और अलर्ट के लिए, या नीचे फोटो अपलोड करें!`,
     imgResponse: 'मैंने आपकी अपलोड की गई छवि को AI रोग पहचान से स्कैन किया है। यहाँ मेरा निदान है:',
     userMsg: 'कृपया इस फसल छवि में रोगों का विश्लेषण करें।',
-    diagnosisTag: '🔬 AI निदान',
-    confidence: 'विश्वास',
+    diagnosisTag: '🔬 AI निदान', confidence: 'विश्वास',
     diagnosisName: 'अल्टरनेरिया पत्ती झुलसा',
     diagnosisDesc: 'पत्तियों पर भूरे गोलाकार धब्बे। प्याज, गाजर में सामान्य। मैनकोजेब 75% WP 2g/L पानी में मिलाकर, 3 सप्ताह तक साप्ताहिक छिड़काव करें।',
     langSwitchMsg: `🌐 <strong>भाषा हिन्दी में सेट की गई।</strong> सभी संदेश अब हिंदी में हैं।`,
+    routineTitle: '7-दिवसीय देखभाल दिनचर्या',
   }
 };
 
 function applyUILanguage(lang) {
   const s = uiStrings[lang];
-  // Nav
-  document.querySelector('.status-dot + span').textContent = s.aiOnline;
-  document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').textContent = s.langBtn;
-  document.getElementById('translateBtn').textContent = s.transBtn;
-  // Chat header buttons
-  const headerBtns = document.querySelectorAll('.chat-header > div:last-child .nav-btn');
-  if (headerBtns[0]) headerBtns[0].textContent = s.histBtn;
-  if (headerBtns[1]) headerBtns[1].textContent = s.transBtn;
-  // Chat header text
-  document.querySelector('.chat-title').textContent = s.chatTitle;
-  document.querySelector('.chat-subtitle').textContent = s.chatSubtitle;
-  // Upload
-  document.getElementById('imgBtn').innerHTML = s.uploadBtn;
-  document.querySelector('.preview-size').textContent = s.previewSize;
-  document.querySelector('.preview-send').textContent = s.analyzeBtn;
-  document.querySelector('.nav-btn.primary').textContent = s.newScan;
-  // Sidebar headers
-  document.querySelector('#panelLeft .sidebar-title').textContent = s.newsTitle;
-  document.querySelector('#panelLeft .tag-pill.active').textContent = s.liveTag;
-  // Translate modal
-  document.getElementById('transModalTitle').textContent = s.transModalTitle;
-  document.getElementById('translateNote').textContent = s.translateNote;
-  document.getElementById('transCloseBtn').textContent = s.transClose;
-  // Read aloud buttons
-  document.querySelectorAll('.read-aloud-btn:not(.speaking)').forEach(btn => {
-    btn.innerHTML = `<span class="speaker-icon">🔊</span> ${lang === 'hi' ? 'जोर से पढ़ें' : 'Read Aloud'}`;
+  try { document.querySelector('.status-dot + span').textContent = s.aiOnline; } catch(e){}
+  try { document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').textContent = s.langBtn; } catch(e){}
+  try { document.getElementById('translateBtn').textContent = s.transBtn; } catch(e){}
+  try {
+    const hBtns = document.querySelectorAll('.chat-header > div:last-child .nav-btn');
+    if (hBtns[0]) hBtns[0].textContent = s.histBtn;
+    if (hBtns[1]) hBtns[1].textContent = s.transBtn;
+  } catch(e){}
+  try { document.querySelector('.chat-title').textContent = s.chatTitle; } catch(e){}
+  try { document.querySelector('.chat-subtitle').textContent = s.chatSubtitle; } catch(e){}
+  try { document.getElementById('imgBtn').innerHTML = s.uploadBtn; } catch(e){}
+  try { document.querySelector('.preview-size').textContent = s.previewSize; } catch(e){}
+  try { document.querySelector('.preview-send').textContent = s.analyzeBtn; } catch(e){}
+  try { document.querySelector('.nav-btn.primary').textContent = s.newScan; } catch(e){}
+  try { document.querySelector('#panelLeft .sidebar-title').textContent = s.newsTitle; } catch(e){}
+  try { document.querySelector('#panelLeft .sidebar-header .tag-pill.active').textContent = s.liveTag; } catch(e){}
+  try { document.getElementById('transModalTitle').textContent = s.transModalTitle; } catch(e){}
+  try { document.getElementById('translateNote').textContent = s.translateNote; } catch(e){}
+  try { document.getElementById('transCloseBtn').textContent = s.transClose; } catch(e){}
+  try {
+    document.querySelectorAll('.read-aloud-btn:not(.speaking)').forEach(btn => {
+      btn.innerHTML = `<span class="speaker-icon">🔊</span> ${lang === 'hi' ? 'जोर से पढ़ें' : 'Read Aloud'}`;
+    });
+  } catch(e){}
+  // Routine titles
+  try {
+    document.querySelectorAll('.routine-title').forEach(el => {
+      el.textContent = chatTranslations[lang].routineTitle;
+    });
+  } catch(e){}
+}
+
+// ── Translate all rendered routine cards to the given language ──
+function translateRoutineCards(lang) {
+  const days = routineData[lang] || routineData.en;
+  const t = chatTranslations[lang] || chatTranslations.en;
+  const isHi = lang === 'hi';
+  const todayWord = isHi ? 'आज' : 'TODAY';
+  const progressLabel = isHi ? 'स्वास्थ्य लाभ प्रगति' : 'Recovery Progress';
+  const daysWord = isHi ? 'दिन' : 'days';
+  const resetLabel = isHi ? '↺ रीसेट' : '↺ Reset';
+  const diagSubtitle = isHi ? `${t.diagnosisName} के लिए` : `Tailored for ${t.diagnosisName}`;
+
+  document.querySelectorAll('.routine-card').forEach(card => {
+    const cardId = card.id;
+    // Update language attribute
+    card.dataset.lang = lang;
+
+    // Header texts
+    const rt = card.querySelector('.routine-title');
+    if (rt) rt.textContent = t.routineTitle;
+    const rs = card.querySelector('.routine-subtitle');
+    if (rs) rs.textContent = diagSubtitle;
+
+    // Rebuild day rows with new language
+    const grid = document.getElementById(cardId + '_grid');
+    const savedState = loadRoutineState(cardId);
+    if (grid) {
+      grid.innerHTML = days.map((d, i) => {
+        const isDone = savedState.done.includes(d.day);
+        const isToday = !isDone && savedState.done.length === i;
+        return `
+          <div class="day-row ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}" id="${cardId}_day${d.day}" onclick="toggleDay('${cardId}', ${d.day})">
+            <div class="day-number">${isHi ? 'दि' : 'D'}${d.day}</div>
+            <div class="day-info">
+              <div class="day-title">
+                ${d.emoji} ${d.title}
+                ${isToday ? `<span class="today-badge">${todayWord}</span>` : ''}
+              </div>
+              <div class="day-desc">${d.desc}</div>
+            </div>
+            <span class="day-tag ${d.tag}">${d.tagLabel}</span>
+            <div class="day-check">${isDone ? '✓' : ''}</div>
+          </div>`;
+      }).join('');
+    }
+
+    // Footer
+    const pl = document.getElementById(cardId + '_progressLabel');
+    if (pl) pl.textContent = progressLabel;
+    const pctLabel = document.getElementById(cardId + '_pctLabel');
+    if (pctLabel) {
+      const doneCount = savedState.done.length;
+      const pct = Math.round((doneCount / days.length) * 100);
+      pctLabel.textContent = `${doneCount}/${days.length} ${daysWord} · ${pct}%`;
+    }
+    const rb = document.getElementById(cardId + '_resetBtn');
+    if (rb) rb.textContent = resetLabel;
   });
-  // Bottom nav labels
-  const bnavBtns = document.querySelectorAll('.bottom-nav-btn');
-  if (bnavBtns[0]) bnavBtns[0].innerHTML = `<span class="bnav-icon">📰</span>${lang === 'hi' ? 'समाचार' : 'News'}`;
-  if (bnavBtns[1]) bnavBtns[1].innerHTML = `<span class="bnav-icon">🤖</span>${lang === 'hi' ? 'चैट' : 'Chat'}`;
 }
 
 function translateChatMessages(lang) {
   const t = chatTranslations[lang];
-  // Translate all AI bubbles
   const msgs = document.getElementById('chatMessages');
-  const wrappers = msgs.children;
   let aiIdx = 0;
-  Array.from(wrappers).forEach(wrapper => {
+  Array.from(msgs.children).forEach(wrapper => {
     const bubble = wrapper.querySelector('.msg-bubble');
     if (!bubble) return;
     const isUser = wrapper.querySelector('.msg.user');
     const isAI = wrapper.querySelector('.msg.ai');
     if (isUser) {
-      // Translate user messages
-      const textNode = bubble.childNodes[bubble.childNodes.length - 1];
-      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-        textNode.textContent = t.userMsg;
-      } else {
-        // find last text content
-        const allText = bubble.innerHTML;
-        if (allText.includes('Please analyze') || allText.includes('विश्लेषण करें') || allText.includes('कृपया')) {
-          const imgPart = bubble.querySelector('.msg-image-preview');
-          bubble.innerHTML = '';
-          if (imgPart) bubble.appendChild(imgPart);
-          bubble.insertAdjacentText('beforeend', t.userMsg);
-        }
-      }
+      const imgPart = bubble.querySelector('.msg-image-preview');
+      bubble.innerHTML = '';
+      if (imgPart) bubble.appendChild(imgPart);
+      bubble.insertAdjacentText('beforeend', t.userMsg);
     }
     if (isAI) {
+      // Pull out live DOM nodes BEFORE touching innerHTML so IDs are preserved
       const diagCard = bubble.querySelector('.diagnosis-card');
-      // Translate diagnosis card if present
+      const routineCard = bubble.querySelector('.routine-card');
+
+      // Translate diagnosis card in-place (no innerHTML replacement needed)
       if (diagCard) {
-        diagCard.querySelector('.diagnosis-tag').textContent = t.diagnosisTag;
-        diagCard.querySelector('.diagnosis-name').textContent = t.diagnosisName;
-        diagCard.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc;
-        const confLabels = diagCard.querySelectorAll('.conf-label');
-        if (confLabels[0]) confLabels[0].textContent = t.confidence;
+        try { diagCard.querySelector('.diagnosis-tag').textContent = t.diagnosisTag; } catch(e){}
+        try { diagCard.querySelector('.diagnosis-name').textContent = t.diagnosisName; } catch(e){}
+        try { diagCard.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc; } catch(e){}
+        try { const cl = diagCard.querySelectorAll('.conf-label'); if (cl[0]) cl[0].textContent = t.confidence; } catch(e){}
       }
-      // Translate main AI text (first text node or innerHTML)
-      const rawInner = bubble.innerHTML;
+
+      // Rebuild only the text prefix of the bubble, then re-attach card nodes
+      const raw = bubble.innerHTML;
+      let newText = null;
       if (aiIdx === 0) {
-        // Welcome message
-        const newHTML = t.welcome + (diagCard ? bubble.querySelector('.diagnosis-card').outerHTML : '');
-        bubble.innerHTML = newHTML;
-        if (diagCard) {
-          // Re-translate after re-insert
-          const dc2 = bubble.querySelector('.diagnosis-card');
-          if (dc2) {
-            dc2.querySelector('.diagnosis-tag').textContent = t.diagnosisTag;
-            dc2.querySelector('.diagnosis-name').textContent = t.diagnosisName;
-            dc2.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc;
-            const cLabels = dc2.querySelectorAll('.conf-label');
-            if (cLabels[0]) cLabels[0].textContent = t.confidence;
-          }
-        }
-      } else if (rawInner.includes("scanned") || rawInner.includes("स्कैन") || rawInner.includes("diagnosis") || rawInner.includes("निदान")) {
-        const dc = bubble.querySelector('.diagnosis-card');
-        bubble.innerHTML = t.imgResponse + (dc ? dc.outerHTML : '');
-        const dc2 = bubble.querySelector('.diagnosis-card');
-        if (dc2) {
-          dc2.querySelector('.diagnosis-tag').textContent = t.diagnosisTag;
-          dc2.querySelector('.diagnosis-name').textContent = t.diagnosisName;
-          dc2.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc;
-          const cLabels = dc2.querySelectorAll('.conf-label');
-          if (cLabels[0]) cLabels[0].textContent = t.confidence;
-        }
-      } else if (rawInner.includes('Language set') || rawInner.includes('भाषा हिन्दी') || rawInner.includes('भाषा')) {
+        newText = t.welcome;
+      } else if (raw.includes('scanned') || raw.includes('diagnosis') || raw.includes('स्कैन') || raw.includes('निदान')) {
+        newText = t.imgResponse;
+      } else if (raw.includes('Language set') || raw.includes('भाषा')) {
         bubble.innerHTML = t.langSwitchMsg;
+        aiIdx++;
+        return;
       }
+
+      if (newText !== null) {
+        // Detach the card nodes first so they survive the innerHTML reset
+        if (diagCard) diagCard.remove();
+        if (routineCard) routineCard.remove();
+        bubble.innerHTML = newText;
+        if (diagCard) bubble.appendChild(diagCard);
+        if (routineCard) bubble.appendChild(routineCard);
+      }
+
       aiIdx++;
     }
   });
+  // Now translate all routine cards in-place (IDs are still intact in DOM)
+  translateRoutineCards(lang);
 }
 
-// ═══════════════════════════════════════
-// ALL LANGUAGES DATA
-// ═══════════════════════════════════════
-const allLanguages = [
-  // ── INDIAN LANGUAGES ──
-  { code:'hi',  flag:'🇮🇳', name:'Hindi',       native:'हिन्दी',      group:'Indian' },
-  { code:'mr',  flag:'🇮🇳', name:'Marathi',     native:'मराठी',       group:'Indian' },
-  { code:'pa',  flag:'🇮🇳', name:'Punjabi',     native:'ਪੰਜਾਬੀ',      group:'Indian' },
-  { code:'gu',  flag:'🇮🇳', name:'Gujarati',    native:'ગુજરાતી',     group:'Indian' },
-  { code:'bn',  flag:'🇮🇳', name:'Bengali',     native:'বাংলা',       group:'Indian' },
-  { code:'ta',  flag:'🇮🇳', name:'Tamil',       native:'தமிழ்',       group:'Indian' },
-  { code:'te',  flag:'🇮🇳', name:'Telugu',      native:'తెలుగు',      group:'Indian' },
-  { code:'kn',  flag:'🇮🇳', name:'Kannada',     native:'ಕನ್ನಡ',       group:'Indian' },
-  { code:'ml',  flag:'🇮🇳', name:'Malayalam',   native:'മലയാളം',      group:'Indian' },
-  { code:'or',  flag:'🇮🇳', name:'Odia',        native:'ଓଡ଼ିଆ',       group:'Indian' },
-  { code:'as',  flag:'🇮🇳', name:'Assamese',    native:'অসমীয়া',     group:'Indian' },
-  { code:'ur',  flag:'🇮🇳', name:'Urdu',        native:'اردو',        group:'Indian' },
-  { code:'ks',  flag:'🇮🇳', name:'Kashmiri',    native:'كٲشُر',       group:'Indian' },
-  { code:'sd',  flag:'🇮🇳', name:'Sindhi',      native:'سنڌي',        group:'Indian' },
-  { code:'sa',  flag:'🇮🇳', name:'Sanskrit',    native:'संस्कृतम्',   group:'Indian' },
-  { code:'ne',  flag:'🇳🇵', name:'Nepali',      native:'नेपाली',      group:'Indian' },
-  { code:'si',  flag:'🇱🇰', name:'Sinhala',     native:'සිංහල',       group:'Indian' },
-  { code:'mai', flag:'🇮🇳', name:'Maithili',    native:'मैथिली',      group:'Indian' },
-  { code:'kok', flag:'🇮🇳', name:'Konkani',     native:'कोंकणी',      group:'Indian' },
-  { code:'mni', flag:'🇮🇳', name:'Manipuri',    native:'মৈতৈলোন্',   group:'Indian' },
-  { code:'doi', flag:'🇮🇳', name:'Dogri',       native:'डोगरी',       group:'Indian' },
-  { code:'sat', flag:'🇮🇳', name:'Santali',     native:'ᱥᱟᱱᱛᱟᱲᱤ',   group:'Indian' },
-  { code:'brx', flag:'🇮🇳', name:'Bodo',        native:'बड़ो',         group:'Indian' },
-
-  // ── EUROPEAN LANGUAGES ──
-  { code:'en',  flag:'🇬🇧', name:'English',     native:'English',     group:'European' },
-  { code:'fr',  flag:'🇫🇷', name:'French',      native:'Français',    group:'European' },
-  { code:'de',  flag:'🇩🇪', name:'German',      native:'Deutsch',     group:'European' },
-  { code:'es',  flag:'🇪🇸', name:'Spanish',     native:'Español',     group:'European' },
-  { code:'pt',  flag:'🇵🇹', name:'Portuguese',  native:'Português',   group:'European' },
-  { code:'it',  flag:'🇮🇹', name:'Italian',     native:'Italiano',    group:'European' },
-  { code:'nl',  flag:'🇳🇱', name:'Dutch',       native:'Nederlands',  group:'European' },
-  { code:'ru',  flag:'🇷🇺', name:'Russian',     native:'Русский',     group:'European' },
-  { code:'pl',  flag:'🇵🇱', name:'Polish',      native:'Polski',      group:'European' },
-  { code:'uk',  flag:'🇺🇦', name:'Ukrainian',   native:'Українська',  group:'European' },
-  { code:'cs',  flag:'🇨🇿', name:'Czech',       native:'Čeština',     group:'European' },
-  { code:'sk',  flag:'🇸🇰', name:'Slovak',      native:'Slovenčina',  group:'European' },
-  { code:'ro',  flag:'🇷🇴', name:'Romanian',    native:'Română',      group:'European' },
-  { code:'hu',  flag:'🇭🇺', name:'Hungarian',   native:'Magyar',      group:'European' },
-  { code:'el',  flag:'🇬🇷', name:'Greek',       native:'Ελληνικά',    group:'European' },
-  { code:'sv',  flag:'🇸🇪', name:'Swedish',     native:'Svenska',     group:'European' },
-  { code:'no',  flag:'🇳🇴', name:'Norwegian',   native:'Norsk',       group:'European' },
-  { code:'da',  flag:'🇩🇰', name:'Danish',      native:'Dansk',       group:'European' },
-  { code:'fi',  flag:'🇫🇮', name:'Finnish',     native:'Suomi',       group:'European' },
-  { code:'bg',  flag:'🇧🇬', name:'Bulgarian',   native:'Български',   group:'European' },
-  { code:'hr',  flag:'🇭🇷', name:'Croatian',    native:'Hrvatski',    group:'European' },
-  { code:'sr',  flag:'🇷🇸', name:'Serbian',     native:'Српски',      group:'European' },
-  { code:'lt',  flag:'🇱🇹', name:'Lithuanian',  native:'Lietuvių',    group:'European' },
-  { code:'lv',  flag:'🇱🇻', name:'Latvian',     native:'Latviešu',    group:'European' },
-  { code:'et',  flag:'🇪🇪', name:'Estonian',    native:'Eesti',       group:'European' },
-  { code:'sl',  flag:'🇸🇮', name:'Slovenian',   native:'Slovenščina', group:'European' },
-  { code:'mk',  flag:'🇲🇰', name:'Macedonian',  native:'Македонски',  group:'European' },
-  { code:'sq',  flag:'🇦🇱', name:'Albanian',    native:'Shqip',       group:'European' },
-  { code:'ca',  flag:'🏳️', name:'Catalan',     native:'Català',      group:'European' },
-  { code:'gl',  flag:'🏳️', name:'Galician',    native:'Galego',      group:'European' },
-  { code:'eu',  flag:'🏳️', name:'Basque',      native:'Euskara',     group:'European' },
-  { code:'is',  flag:'🇮🇸', name:'Icelandic',   native:'Íslenska',    group:'European' },
-  { code:'ga',  flag:'🇮🇪', name:'Irish',       native:'Gaeilge',     group:'European' },
-  { code:'cy',  flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿', name:'Welsh',      native:'Cymraeg',     group:'European' },
-  { code:'mt',  flag:'🇲🇹', name:'Maltese',     native:'Malti',       group:'European' },
-  { code:'lb',  flag:'🇱🇺', name:'Luxembourgish',native:'Lëtzebuergesch',group:'European'},
-  { code:'be',  flag:'🇧🇾', name:'Belarusian',  native:'Беларуская',  group:'European' },
-
-  // ── EAST ASIAN ──
-  { code:'zh',  flag:'🇨🇳', name:'Chinese (Simplified)', native:'中文 (简体)', group:'East Asian' },
-  { code:'zh-TW',flag:'🇹🇼',name:'Chinese (Traditional)',native:'中文 (繁體)', group:'East Asian' },
-  { code:'ja',  flag:'🇯🇵', name:'Japanese',    native:'日本語',       group:'East Asian' },
-  { code:'ko',  flag:'🇰🇷', name:'Korean',      native:'한국어',       group:'East Asian' },
-  { code:'mn',  flag:'🇲🇳', name:'Mongolian',   native:'Монгол',      group:'East Asian' },
-  { code:'bo',  flag:'🏳️', name:'Tibetan',     native:'བོད་སྐད།',    group:'East Asian' },
-
-  // ── SOUTHEAST ASIAN ──
-  { code:'id',  flag:'🇮🇩', name:'Indonesian',  native:'Bahasa Indonesia', group:'Southeast Asian' },
-  { code:'ms',  flag:'🇲🇾', name:'Malay',       native:'Bahasa Melayu', group:'Southeast Asian' },
-  { code:'tl',  flag:'🇵🇭', name:'Filipino',    native:'Filipino',    group:'Southeast Asian' },
-  { code:'th',  flag:'🇹🇭', name:'Thai',        native:'ภาษาไทย',     group:'Southeast Asian' },
-  { code:'vi',  flag:'🇻🇳', name:'Vietnamese',  native:'Tiếng Việt',  group:'Southeast Asian' },
-  { code:'km',  flag:'🇰🇭', name:'Khmer',       native:'ភាសាខ្មែរ',   group:'Southeast Asian' },
-  { code:'lo',  flag:'🇱🇦', name:'Lao',         native:'ພາສາລາວ',     group:'Southeast Asian' },
-  { code:'my',  flag:'🇲🇲', name:'Burmese',     native:'မြန်မာဘာသာ', group:'Southeast Asian' },
-  { code:'jv',  flag:'🇮🇩', name:'Javanese',    native:'Basa Jawa',   group:'Southeast Asian' },
-  { code:'su',  flag:'🇮🇩', name:'Sundanese',   native:'Basa Sunda',  group:'Southeast Asian' },
-
-  // ── MIDDLE EASTERN & CENTRAL ASIAN ──
-  { code:'ar',  flag:'🇸🇦', name:'Arabic',      native:'العربية',     group:'Middle Eastern' },
-  { code:'fa',  flag:'🇮🇷', name:'Persian',     native:'فارسی',       group:'Middle Eastern' },
-  { code:'tr',  flag:'🇹🇷', name:'Turkish',     native:'Türkçe',      group:'Middle Eastern' },
-  { code:'he',  flag:'🇮🇱', name:'Hebrew',      native:'עברית',       group:'Middle Eastern' },
-  { code:'az',  flag:'🇦🇿', name:'Azerbaijani', native:'Azərbaycan',  group:'Middle Eastern' },
-  { code:'kk',  flag:'🇰🇿', name:'Kazakh',      native:'Қазақ',       group:'Middle Eastern' },
-  { code:'uz',  flag:'🇺🇿', name:'Uzbek',       native:'Oʻzbek',      group:'Middle Eastern' },
-  { code:'tk',  flag:'🇹🇲', name:'Turkmen',     native:'Türkmen',     group:'Middle Eastern' },
-  { code:'ky',  flag:'🇰🇬', name:'Kyrgyz',      native:'Кыргыз',      group:'Middle Eastern' },
-  { code:'tg',  flag:'🇹🇯', name:'Tajik',       native:'Тоҷикӣ',      group:'Middle Eastern' },
-  { code:'ps',  flag:'🇦🇫', name:'Pashto',      native:'پښتو',        group:'Middle Eastern' },
-  { code:'ku',  flag:'🏳️', name:'Kurdish',     native:'Kurdî',       group:'Middle Eastern' },
-  { code:'hy',  flag:'🇦🇲', name:'Armenian',    native:'Հայերեն',     group:'Middle Eastern' },
-  { code:'ka',  flag:'🇬🇪', name:'Georgian',    native:'ქართული',     group:'Middle Eastern' },
-
-  // ── AFRICAN ──
-  { code:'sw',  flag:'🌍', name:'Swahili',     native:'Kiswahili',   group:'African' },
-  { code:'am',  flag:'🇪🇹', name:'Amharic',     native:'አማርኛ',       group:'African' },
-  { code:'ha',  flag:'🌍', name:'Hausa',       native:'Hausa',       group:'African' },
-  { code:'yo',  flag:'🌍', name:'Yoruba',      native:'Yorùbá',      group:'African' },
-  { code:'ig',  flag:'🌍', name:'Igbo',        native:'Igbo',        group:'African' },
-  { code:'zu',  flag:'🇿🇦', name:'Zulu',        native:'isiZulu',     group:'African' },
-  { code:'xh',  flag:'🇿🇦', name:'Xhosa',       native:'isiXhosa',    group:'African' },
-  { code:'af',  flag:'🇿🇦', name:'Afrikaans',   native:'Afrikaans',   group:'African' },
-  { code:'so',  flag:'🇸🇴', name:'Somali',      native:'Soomaali',    group:'African' },
-  { code:'om',  flag:'🌍', name:'Oromo',       native:'Afaan Oromoo',group:'African' },
-  { code:'rw',  flag:'🇷🇼', name:'Kinyarwanda', native:'Kinyarwanda', group:'African' },
-  { code:'mg',  flag:'🇲🇬', name:'Malagasy',    native:'Malagasy',    group:'African' },
-  { code:'sn',  flag:'🇿🇼', name:'Shona',       native:'Shona',       group:'African' },
-  { code:'st',  flag:'🇱🇸', name:'Sotho',       native:'Sesotho',     group:'African' },
-  { code:'ny',  flag:'🇲🇼', name:'Chichewa',    native:'Chichewa',    group:'African' },
-
-  // ── AMERICAS ──
-  { code:'pt-BR',flag:'🇧🇷',name:'Portuguese (Brazil)',native:'Português (Brasil)',group:'Americas'},
-  { code:'es-MX',flag:'🇲🇽',name:'Spanish (Mexico)',native:'Español (México)',group:'Americas'},
-  { code:'qu',  flag:'🇵🇪', name:'Quechua',     native:'Runa Simi',   group:'Americas' },
-  { code:'gu-GT',flag:'🇬🇹',name:'Guatemalan Spanish',native:'Español (Guatemala)',group:'Americas'},
-  { code:'ht',  flag:'🇭🇹', name:'Haitian Creole',native:'Kreyòl ayisyen',group:'Americas'},
-
-  // ── PACIFIC ──
-  { code:'haw', flag:'🌺', name:'Hawaiian',    native:'ʻŌlelo Hawaiʻi',group:'Pacific'},
-  { code:'mi',  flag:'🇳🇿', name:'Māori',       native:'Te Reo Māori', group:'Pacific' },
-  { code:'sm',  flag:'🇼🇸', name:'Samoan',      native:'Gagana Samoa', group:'Pacific' },
-  { code:'fj',  flag:'🇫🇯', name:'Fijian',      native:'Vosa Vakaviti',group:'Pacific' },
-
-  // ── CONSTRUCTED / CLASSICAL ──
-  { code:'eo',  flag:'🌐', name:'Esperanto',   native:'Esperanto',   group:'Other' },
-  { code:'la',  flag:'🏛️', name:'Latin',       native:'Latina',      group:'Other' },
-];
-
-// Full UI strings only for EN and HI — all others use AI translation
-const uiStringsFull = {
-  en: uiStrings.en,
-  hi: uiStrings.hi
+const uiSource = {
+  aiOnline:'AI Online', langBtn:'🌐 Language', chatTitle:'Fasal AI Assistant',
+  chatSubtitle:'Crop Disease Detection · Treatment Advice · Image Analysis',
+  histBtn:'📋 History', transBtn:'🌍 Translate', uploadBtn:'📸 Upload Crop Photo',
+  analyzeBtn:'Analyze ➤', previewSize:'Ready for AI disease analysis', newScan:'+ New Scan',
+  transModalTitle:'Select Language', translateNote:'Switching language will translate the interface and all chat messages.',
+  transClose:'Cancel', newsTitle:'📰 Crop News & Alerts', liveTag:'Live',
+  readAloud:'🔊 Read Aloud', routineTitle:'7-Day Recovery Routine',
+  welcomeMsg:`🌱 <strong>Namaste, Farmer!</strong> I'm Fasal AI, your digital crop doctor.<br><br>📸 <strong>Disease Detection</strong> — Upload a photo of your crop<br>💊 <strong>Treatment Plans</strong> — Get medicine & pesticide advice<br>🌦️ <strong>Weather & Seasonal Tips</strong><br><br>Tap 📰 for crop news & alerts, or upload a photo below!`,
+  imgResponse:"I've scanned your uploaded image using AI disease detection. Here's my diagnosis:",
+  userMsg:'Please analyze this crop image for diseases.',
+  diagnosisTag:'🔬 AI Diagnosis', confidence:'Confidence',
+  diagnosisName:'Alternaria Leaf Blight',
+  diagnosisDesc:'Brown concentric ring spots on leaves. Common in onion, carrot. Recommend Mancozeb 75% WP at 2g/L water, apply weekly for 3 weeks.',
 };
 
-// Translation cache — avoids re-fetching
 const translationCache = { en: uiStrings.en, hi: uiStrings.hi };
 
-// All translatable UI strings (English source)
-const uiSource = {
-  aiOnline: 'AI Online',
-  langBtn: '🌐 Language',
-  chatTitle: 'Fasal AI Assistant',
-  chatSubtitle: 'Crop Disease Detection · Treatment Advice · Image Analysis',
-  histBtn: '📋 History',
-  transBtn: '🌍 Translate',
-  historyBtn: '📋 History',
-  uploadBtn: '📸 Upload Crop Photo',
-  analyzeBtn: 'Analyze ➤',
-  previewSize: 'Ready for AI disease analysis',
-  newScan: '+ New Scan',
-  readAloud: '🔊 Read Aloud',
-  stop: '🔈 Stop',
-  transModalTitle: 'Select Language',
-  translateNote: 'Switching language will translate the interface and all chat messages.',
-  transClose: 'Cancel',
-  newsTitle: '📰 Crop News & Alerts',
-  liveTag: 'Live',
-  historyLbl: 'History',
-  translateLbl: 'Translate',
-  welcomeMsg: `🌱 <strong>Namaste, Farmer!</strong> I'm Fasal AI, your digital crop doctor.<br><br>📸 <strong>Disease Detection</strong> — Upload a photo of your crop<br>💊 <strong>Treatment Plans</strong> — Get medicine & pesticide advice<br>🌦️ <strong>Weather & Seasonal Tips</strong><br><br>Tap 📰 for crop news & alerts, or upload a photo below!`,
-  imgResponse: "I've scanned your uploaded image using AI disease detection. Here's my diagnosis:",
-  userMsg: 'Please analyze this crop image for diseases.',
-  diagnosisTag: '🔬 AI Diagnosis',
-  confidence: 'Confidence',
-  diagnosisName: 'Alternaria Leaf Blight',
-  diagnosisDesc: 'Brown concentric ring spots on leaves. Common in onion, carrot. Recommend Mancozeb 75% WP at 2g/L water, apply weekly for 3 weeks.',
-};
-
 function showTranslateLoading(langObj) {
-  // Show spinner overlay on translate modal body
   const body = document.querySelector('#translateModal .modal-body');
   body._origHTML = body.innerHTML;
   body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:16px;">
@@ -1400,145 +1524,28 @@ function hideTranslateLoading() {
 
 async function fetchTranslation(langObj) {
   if (translationCache[langObj.code]) return translationCache[langObj.code];
-
   const prompt = `You are a professional translator. Translate the following JSON object's string values into ${langObj.name} (${langObj.native}).
-
-Rules:
-- Keep ALL keys exactly as-is
-- Keep emojis exactly as-is (🌱, 📸, 💊, etc.)
-- Keep HTML tags exactly as-is (<strong>, <br>, &amp; etc.)
-- Keep ➤ arrow symbol as-is
-- Translate ONLY the text portions
-- Return ONLY valid JSON, no markdown, no code blocks, no explanation
-
-JSON to translate:
-${JSON.stringify(uiSource, null, 2)}`;
-
+Rules: Keep ALL keys exactly as-is. Keep emojis exactly as-is. Keep HTML tags exactly as-is. Keep ➤ as-is. Translate ONLY text portions. Return ONLY valid JSON, no markdown.
+JSON: ${JSON.stringify(uiSource, null, 2)}`;
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
   });
-
   const data = await response.json();
   const text = data.content?.[0]?.text || '{}';
-  // Strip possible markdown fences
   const clean = text.replace(/```json|```/g, '').trim();
   try {
     const translated = JSON.parse(clean);
-    // Merge with source to fill any missing keys
     const merged = { ...uiSource, ...translated };
     translationCache[langObj.code] = merged;
     return merged;
-  } catch(e) {
-    console.error('Translation parse error', e);
-    return uiSource; // fallback to English
-  }
-}
-
-function applyTranslation(t, langObj) {
-  // Nav
-  try { document.querySelector('.status-dot + span').textContent = t.aiOnline; } catch(e){}
-  try { document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').textContent = t.langBtn; } catch(e){}
-  try { document.getElementById('translateBtn').textContent = t.transBtn; } catch(e){}
-  // Chat header buttons
-  try {
-    const headerBtns = document.querySelectorAll('.chat-header > div:last-child .nav-btn');
-    if (headerBtns[0]) headerBtns[0].textContent = t.histBtn;
-    if (headerBtns[1]) headerBtns[1].textContent = t.transBtn;
-  } catch(e){}
-  // Chat header text
-  try { document.querySelector('.chat-title').textContent = t.chatTitle; } catch(e){}
-  try { document.querySelector('.chat-subtitle').textContent = t.chatSubtitle; } catch(e){}
-  // Upload area
-  try { document.getElementById('imgBtn').innerHTML = t.uploadBtn; } catch(e){}
-  try { document.querySelector('.preview-size').textContent = t.previewSize; } catch(e){}
-  try { document.querySelector('.preview-send').textContent = t.analyzeBtn; } catch(e){}
-  try { document.querySelector('.nav-btn.primary').textContent = t.newScan; } catch(e){}
-  // Sidebar
-  try { document.querySelector('#panelLeft .sidebar-title').textContent = t.newsTitle; } catch(e){}
-  try { document.querySelector('#panelLeft .sidebar-header .tag-pill.active').textContent = t.liveTag; } catch(e){}
-  // Translate modal
-  try { document.getElementById('transModalTitle').textContent = t.transModalTitle; } catch(e){}
-  try { document.getElementById('translateNote').textContent = t.translateNote; } catch(e){}
-  try { document.getElementById('transCloseBtn').textContent = t.transClose; } catch(e){}
-  // Read aloud buttons
-  try {
-    document.querySelectorAll('.read-aloud-btn:not(.speaking)').forEach(btn => {
-      btn.innerHTML = `<span class="speaker-icon">🔊</span> ${t.readAloud.replace('🔊 ','').replace('🔊','')}`;
-    });
-  } catch(e){}
-  // Bottom nav
-  try {
-    const bnavBtns = document.querySelectorAll('.bottom-nav-btn');
-    if (bnavBtns[0]) bnavBtns[0].innerHTML = `<span class="bnav-icon">📰</span>${t.newsTitle.replace('📰 Crop News & Alerts','').replace('📰','').trim() || t.newsTitle}`;
-    if (bnavBtns[1]) bnavBtns[1].innerHTML = `<span class="bnav-icon">🤖</span>${t.historyLbl}`;
-  } catch(e){}
-  // Chat messages — translate welcome + image response + user msg + diagnosis
-  try { translateChatMessagesDynamic(t); } catch(e){}
-  // Append switch notice
-  appendAIMessage(`${langObj.flag} <strong>${t.chatTitle}</strong> — ${t.translateNote.split('.')[0]}. ✓`);
-}
-
-function translateChatMessagesDynamic(t) {
-  const msgs = document.getElementById('chatMessages');
-  let aiIdx = 0;
-  Array.from(msgs.children).forEach(wrapper => {
-    const bubble = wrapper.querySelector('.msg-bubble');
-    if (!bubble) return;
-    const isUser = wrapper.querySelector('.msg.user');
-    const isAI = wrapper.querySelector('.msg.ai');
-
-    if (isUser) {
-      const imgPart = bubble.querySelector('.msg-image-preview');
-      bubble.innerHTML = '';
-      if (imgPart) bubble.appendChild(imgPart);
-      bubble.insertAdjacentText('beforeend', t.userMsg);
-    }
-    if (isAI) {
-      const diagCard = bubble.querySelector('.diagnosis-card');
-      if (diagCard) {
-        try { diagCard.querySelector('.diagnosis-tag').textContent = t.diagnosisTag; } catch(e){}
-        try { diagCard.querySelector('.diagnosis-name').textContent = t.diagnosisName; } catch(e){}
-        try { diagCard.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc; } catch(e){}
-        try { const cl = diagCard.querySelectorAll('.conf-label'); if(cl[0]) cl[0].textContent = t.confidence; } catch(e){}
-      }
-      const raw = bubble.innerHTML;
-      if (aiIdx === 0) {
-        bubble.innerHTML = t.welcomeMsg + (diagCard ? diagCard.outerHTML : '');
-        const dc2 = bubble.querySelector('.diagnosis-card');
-        if (dc2) {
-          try { dc2.querySelector('.diagnosis-tag').textContent = t.diagnosisTag; } catch(e){}
-          try { dc2.querySelector('.diagnosis-name').textContent = t.diagnosisName; } catch(e){}
-          try { dc2.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc; } catch(e){}
-          try { const cl = dc2.querySelectorAll('.conf-label'); if(cl[0]) cl[0].textContent = t.confidence; } catch(e){}
-        }
-      } else if (raw.includes('scanned') || raw.includes('diagnosis') || raw.includes('स्कैन') || raw.includes('निदान')) {
-        const dc = bubble.querySelector('.diagnosis-card');
-        bubble.innerHTML = t.imgResponse + (dc ? dc.outerHTML : '');
-        const dc2 = bubble.querySelector('.diagnosis-card');
-        if (dc2) {
-          try { dc2.querySelector('.diagnosis-tag').textContent = t.diagnosisTag; } catch(e){}
-          try { dc2.querySelector('.diagnosis-name').textContent = t.diagnosisName; } catch(e){}
-          try { dc2.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc; } catch(e){}
-          try { const cl = dc2.querySelectorAll('.conf-label'); if(cl[0]) cl[0].textContent = t.confidence; } catch(e){}
-        }
-      }
-      // Language switch notices — skip (they get replaced by new one)
-      aiIdx++;
-    }
-  });
+  } catch(e) { return uiSource; }
 }
 
 async function setLanguage(lang) {
   if (lang === currentLang) { closeModal('translateModal'); return; }
   const langObj = allLanguages.find(l => l.code === lang) || { name: lang, native: lang, flag: '🌐', code: lang };
-
-  // For EN/HI use existing hardcoded strings instantly
   if (uiStrings[lang]) {
     currentLang = lang;
     applyUILanguage(lang);
@@ -1547,23 +1554,73 @@ async function setLanguage(lang) {
     closeModal('translateModal');
     return;
   }
-
-  // For all other languages — use AI translation
   showTranslateLoading(langObj);
-
   try {
     const t = await fetchTranslation(langObj);
     currentLang = lang;
     hideTranslateLoading();
-    applyTranslation(t, langObj);
+    // Apply generic translation
+    try { document.querySelector('.status-dot + span').textContent = t.aiOnline; } catch(e){}
+    try { document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').textContent = t.langBtn; } catch(e){}
+    try { document.getElementById('translateBtn').textContent = t.transBtn; } catch(e){}
+    try { document.querySelector('.chat-title').textContent = t.chatTitle; } catch(e){}
+    try { document.querySelector('.chat-subtitle').textContent = t.chatSubtitle; } catch(e){}
+    try { document.getElementById('imgBtn').innerHTML = t.uploadBtn; } catch(e){}
+    try { document.querySelector('.preview-size').textContent = t.previewSize; } catch(e){}
+    try { document.querySelector('.preview-send').textContent = t.analyzeBtn; } catch(e){}
+    try { document.querySelector('.nav-btn.primary').textContent = t.newScan; } catch(e){}
+    try { document.querySelector('#panelLeft .sidebar-title').textContent = t.newsTitle; } catch(e){}
+    try { document.getElementById('transModalTitle').textContent = t.transModalTitle; } catch(e){}
+    try { document.getElementById('translateNote').textContent = t.translateNote; } catch(e){}
+    try { document.getElementById('transCloseBtn').textContent = t.transClose; } catch(e){}
+    try { document.querySelectorAll('.routine-title').forEach(el => { el.textContent = t.routineTitle || '7-Day Recovery Routine'; }); } catch(e){}
+    appendAIMessage(`${langObj.flag} <strong>${t.chatTitle}</strong> — ${(t.translateNote||'').split('.')[0]}. ✓`);
   } catch(err) {
     hideTranslateLoading();
     currentLang = lang;
     appendAIMessage(`${langObj.flag} <strong>Language set to ${langObj.name} (${langObj.native}).</strong> Full translation unavailable — showing English interface.`);
   }
-
   closeModal('translateModal');
 }
+
+const allLanguages = [
+  { code:'hi', flag:'🇮🇳', name:'Hindi', native:'हिन्दी', group:'Indian' },
+  { code:'mr', flag:'🇮🇳', name:'Marathi', native:'मराठी', group:'Indian' },
+  { code:'pa', flag:'🇮🇳', name:'Punjabi', native:'ਪੰਜਾਬੀ', group:'Indian' },
+  { code:'gu', flag:'🇮🇳', name:'Gujarati', native:'ગુજરાતી', group:'Indian' },
+  { code:'bn', flag:'🇮🇳', name:'Bengali', native:'বাংলা', group:'Indian' },
+  { code:'ta', flag:'🇮🇳', name:'Tamil', native:'தமிழ்', group:'Indian' },
+  { code:'te', flag:'🇮🇳', name:'Telugu', native:'తెలుగు', group:'Indian' },
+  { code:'kn', flag:'🇮🇳', name:'Kannada', native:'ಕನ್ನಡ', group:'Indian' },
+  { code:'ml', flag:'🇮🇳', name:'Malayalam', native:'മലയാളം', group:'Indian' },
+  { code:'or', flag:'🇮🇳', name:'Odia', native:'ଓଡ଼ିଆ', group:'Indian' },
+  { code:'as', flag:'🇮🇳', name:'Assamese', native:'অসমীয়া', group:'Indian' },
+  { code:'ur', flag:'🇮🇳', name:'Urdu', native:'اردو', group:'Indian' },
+  { code:'ne', flag:'🇳🇵', name:'Nepali', native:'नेपाली', group:'Indian' },
+  { code:'si', flag:'🇱🇰', name:'Sinhala', native:'සිංහල', group:'Indian' },
+  { code:'en', flag:'🇬🇧', name:'English', native:'English', group:'European' },
+  { code:'fr', flag:'🇫🇷', name:'French', native:'Français', group:'European' },
+  { code:'de', flag:'🇩🇪', name:'German', native:'Deutsch', group:'European' },
+  { code:'es', flag:'🇪🇸', name:'Spanish', native:'Español', group:'European' },
+  { code:'pt', flag:'🇵🇹', name:'Portuguese', native:'Português', group:'European' },
+  { code:'it', flag:'🇮🇹', name:'Italian', native:'Italiano', group:'European' },
+  { code:'ru', flag:'🇷🇺', name:'Russian', native:'Русский', group:'European' },
+  { code:'zh', flag:'🇨🇳', name:'Chinese (Simplified)', native:'中文 (简体)', group:'East Asian' },
+  { code:'ja', flag:'🇯🇵', name:'Japanese', native:'日本語', group:'East Asian' },
+  { code:'ko', flag:'🇰🇷', name:'Korean', native:'한국어', group:'East Asian' },
+  { code:'id', flag:'🇮🇩', name:'Indonesian', native:'Bahasa Indonesia', group:'Southeast Asian' },
+  { code:'th', flag:'🇹🇭', name:'Thai', native:'ภาษาไทย', group:'Southeast Asian' },
+  { code:'vi', flag:'🇻🇳', name:'Vietnamese', native:'Tiếng Việt', group:'Southeast Asian' },
+  { code:'ar', flag:'🇸🇦', name:'Arabic', native:'العربية', group:'Middle Eastern' },
+  { code:'tr', flag:'🇹🇷', name:'Turkish', native:'Türkçe', group:'Middle Eastern' },
+  { code:'fa', flag:'🇮🇷', name:'Persian', native:'فارسی', group:'Middle Eastern' },
+  { code:'he', flag:'🇮🇱', name:'Hebrew', native:'עברית', group:'Middle Eastern' },
+  { code:'sw', flag:'🌍', name:'Swahili', native:'Kiswahili', group:'African' },
+  { code:'am', flag:'🇪🇹', name:'Amharic', native:'አማርኛ', group:'African' },
+  { code:'pt-BR', flag:'🇧🇷', name:'Portuguese (Brazil)', native:'Português (Brasil)', group:'Americas' },
+  { code:'es-MX', flag:'🇲🇽', name:'Spanish (Mexico)', native:'Español (México)', group:'Americas' },
+  { code:'eo', flag:'🌐', name:'Esperanto', native:'Esperanto', group:'Other' },
+];
 
 function renderLangList(filter='') {
   const list = document.getElementById('langList');
@@ -1571,25 +1628,18 @@ function renderLangList(filter='') {
   const filtered = q ? allLanguages.filter(l =>
     l.name.toLowerCase().includes(q) || l.native.toLowerCase().includes(q) || l.code.toLowerCase().includes(q)
   ) : allLanguages;
-
   if (filtered.length === 0) {
     list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:0.85rem;">No language found</div>`;
     return;
   }
-
-  // Group them
   const groups = q ? {'Results': filtered} : filtered.reduce((acc, l) => {
-    acc[l.group] = acc[l.group] || [];
-    acc[l.group].push(l);
-    return acc;
+    acc[l.group] = acc[l.group] || []; acc[l.group].push(l); return acc;
   }, {});
-
-  const groupOrder = ['Indian','European','East Asian','Southeast Asian','Middle Eastern','African','Americas','Pacific','Other','Results'];
-
+  const groupOrder = ['Indian','European','East Asian','Southeast Asian','Middle Eastern','African','Americas','Other','Results'];
   list.innerHTML = groupOrder.filter(g => groups[g]).map(g => `
     <div style="font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:8px 4px 5px;">${g}</div>
     ${groups[g].map(l => `
-      <div class="lang-option ${currentLang === l.code ? 'selected' : ''}" onclick="setLanguage('${l.code}')" id="lang_${l.code.replace('-','_')}">
+      <div class="lang-option ${currentLang === l.code ? 'selected' : ''}" onclick="setLanguage('${l.code}')">
         <span class="lang-flag" style="font-size:1.4rem;">${l.flag}</span>
         <div><div class="lang-name">${l.name}</div><div class="lang-native">${l.native}</div></div>
         <span class="lang-check">✓</span>
@@ -1602,9 +1652,12 @@ function filterLangs(val) { renderLangList(val); }
 function openTranslate() {
   document.getElementById('langSearch').value = '';
   renderLangList('');
-  document.getElementById('transModalTitle').textContent = uiStrings[currentLang] ? uiStrings[currentLang].transModalTitle : 'Select Language';
-  document.getElementById('translateNote').textContent = uiStrings[currentLang] ? uiStrings[currentLang].translateNote : 'Select a language for the interface.';
-  document.getElementById('transCloseBtn').textContent = uiStrings[currentLang] ? uiStrings[currentLang].transClose : 'Cancel';
+  const s = uiStrings[currentLang];
+  if (s) {
+    document.getElementById('transModalTitle').textContent = s.transModalTitle;
+    document.getElementById('translateNote').textContent = s.translateNote;
+    document.getElementById('transCloseBtn').textContent = s.transClose;
+  }
   openModal('translateModal');
   setTimeout(() => {
     const sel = document.querySelector('.lang-option.selected');
@@ -1612,7 +1665,6 @@ function openTranslate() {
   }, 50);
 }
 
-// Also hook into the nav EN/हिन्दी button
 document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').addEventListener('click', openTranslate);
 </script>
 </body>

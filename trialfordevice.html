@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fasal — Digital Doctor for Farmers</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── DARK MODE ── */
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #161616;
+    --card: #1a1a1a;
+    --card2: #1f1f1f;
+    --border: #2a2a2a;
+    --accent: #4ecf62;
+    --accent2: #30a844;
+    --accent3: #8ee89a;
+    --warn: #e8c547;
+    --danger: #e86060;
+    --text: #f0f0f0;
+    --muted: #707070;
+    --muted2: #444444;
+  }
+  /* ── LIGHT MODE ── */
+  body.light {
+    --bg: #f8f8f8;
+    --bg2: #ffffff;
+    --bg3: #f2f2f2;
+    --card: #ffffff;
+    --card2: #f5f5f5;
+    --border: #e0e0e0;
+    --accent: #27923b;
+    --accent2: #1d7a2e;
+    --accent3: #5abf6b;
+    --warn: #a07800;
+    --danger: #c0392b;
+    --text: #111111;
+    --muted: #777777;
+    --muted2: #bbbbbb;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; transition: background-color 0.25s, border-color 0.25s, color 0.25s; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 60px;
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; z-index: 100; position: relative;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--accent);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo span { color: var(--text); font-weight: 500; font-size: 0.95rem; opacity: 0.6; margin-left: 4px; }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-btn {
+    padding: 7px 14px; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .nav-btn.outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .nav-btn.outline:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.primary { background: var(--accent2); color: #fff; }
+  .nav-btn.primary:hover { background: var(--accent); }
+  .status-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Theme toggle */
+  .theme-toggle-wrap { display:flex; align-items:center; gap:7px; cursor:pointer; }
+  .t-icon { font-size:1rem; line-height:1; }
+  .toggle-track {
+    width: 38px; height: 21px; background: var(--border);
+    border-radius: 11px; border: 1px solid var(--border);
+    position: relative; flex-shrink: 0;
+  }
+  body.light .toggle-track { background: var(--accent3); border-color: var(--accent2); }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--muted); transition: transform 0.3s, background 0.3s;
+  }
+  body.light .toggle-thumb { transform: translateX(17px); background: var(--accent2); }
+  .toggle-label { font-size:0.78rem; color:var(--muted); min-width:30px; }
+
+  /* ── BODY LAYOUT: sidebar tabs + center ── */
+  .app-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── SIDEBAR PANELS ── */
+  .panel {
+    flex-shrink: 0;
+    width: 0;
+    overflow: hidden;
+    background: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.32s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    z-index: 20;
+  }
+  .panel.left { border-right: 1px solid var(--border); }
+  .panel.right { border-left: 1px solid var(--border); }
+  .panel.open { width: 300px; }
+  .panel-inner { width: 300px; display:flex; flex-direction:column; height:100%; overflow:hidden; }
+
+  /* ── PANEL TOGGLE TABS ── */
+  .panel-tab {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+    display: flex; align-items: center; justify-content: center;
+    width: 22px; height: 64px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+  .panel-tab:hover { background: var(--card); color: var(--accent); border-color: var(--accent); }
+  .panel-tab.left-tab { right: -22px; border-radius: 0 8px 8px 0; border-left: none; }
+  .panel-tab.right-tab { left: -22px; border-radius: 8px 0 0 8px; border-right: none; }
+
+  /* ── SIDEBAR INTERNALS ── */
+  .sidebar-header {
+    padding: 16px 18px 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .sidebar-title {
+    font-family: 'Space Mono', monospace; font-size: 0.7rem;
+    color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .tag-pill { font-size: 0.7rem; padding: 3px 9px; border-radius: 20px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; }
+  .tag-pill.active { background: var(--accent2); color: #fff; }
+  .tag-pill.inactive { background: var(--border); color: var(--muted); }
+  .news-filter { padding: 10px 14px; display:flex; gap:6px; flex-wrap:wrap; flex-shrink:0; }
+
+  /* ── NEWS SLIDESHOW ── */
+  .slideshow-wrap {
+    position: relative; overflow: hidden; flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .slides { display:flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .slide {
+    min-width: 100%; padding: 14px 18px;
+    background: var(--card); cursor: pointer;
+  }
+  .slide-tag { font-size: 0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:5px; }
+  .slide-tag.disease { color: var(--danger); }
+  .slide-tag.tip { color: var(--accent); }
+  .slide-tag.market { color: var(--warn); }
+  .slide-tag.weather { color: #7ec8e3; }
+  .slide-title { font-size: 0.84rem; font-weight:500; line-height:1.4; color:var(--text); margin-bottom:6px; }
+  .slide-meta { font-size:0.7rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center; }
+  .slide-dots { display:flex; gap:5px; justify-content:center; padding:8px; flex-shrink:0; }
+  .sdot { width:6px; height:6px; border-radius:50%; background:var(--border); cursor:pointer; transition:background 0.2s, transform 0.2s; }
+  .sdot.active { background:var(--accent2); transform:scale(1.3); }
+  .slide-arrows { position:absolute; top:50%; transform:translateY(-50%); width:100%; display:flex; justify-content:space-between; pointer-events:none; padding: 0 4px; }
+  .sarrow { pointer-events:all; cursor:pointer; width:22px; height:22px; border-radius:50%; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:var(--muted); transition:all 0.2s; }
+  .sarrow:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* ── NEWS LIST (below slideshow) ── */
+  .news-feed { flex:1; overflow-y:auto; padding:8px 10px 16px; }
+  .news-feed::-webkit-scrollbar { width:3px; }
+  .news-feed::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  .news-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .news-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:var(--accent2); opacity:0; transition:opacity 0.2s; }
+  .news-card:hover { border-color: var(--accent2); transform: translateX(2px); }
+  .news-card:hover::before { opacity:1; }
+  .news-card.alert::before { background:var(--danger); opacity:1; }
+  .news-card.warn::before { background:var(--warn); opacity:1; }
+  .news-tag { font-size:0.62rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:5px; }
+  .news-tag.disease { color:var(--danger); }
+  .news-tag.tip { color:var(--accent); }
+  .news-tag.market { color:var(--warn); }
+  .news-tag.weather { color:#7ec8e3; }
+  .news-title { font-size:0.82rem; font-weight:500; line-height:1.4; color:var(--text); margin-bottom:6px; }
+  .news-meta { font-size:0.7rem; color:var(--muted); display:flex; justify-content:space-between; }
+
+  /* ── CENTER: CHAT ── */
+  .chat-area {
+    flex: 1; display:flex; flex-direction:column; background:var(--bg); overflow:hidden; position:relative;
+  }
+  .chat-header {
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    display:flex; align-items:center; gap:12px; background:var(--bg2); flex-shrink:0;
+  }
+  .ai-avatar {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--card2), var(--accent2));
+    border-radius: 50%; display:flex; align-items:center; justify-content:center;
+    font-size: 1.1rem; border: 2px solid var(--accent2); position:relative; flex-shrink:0;
+  }
+  .ai-avatar::after {
+    content:''; position:absolute; bottom:1px; right:1px;
+    width:9px; height:9px; border-radius:50%;
+    background:var(--accent); border:2px solid var(--bg2);
+  }
+  .chat-title { font-size:0.97rem; font-weight:600; }
+  .chat-subtitle { font-size:0.75rem; color:var(--muted); }
+  .chat-messages {
+    flex:1; overflow-y:auto; padding:22px; display:flex; flex-direction:column; gap:16px;
+  }
+  .chat-messages::-webkit-scrollbar { width:4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+  .msg { display:flex; gap:12px; animation:fadeSlideIn 0.3s ease; }
+  @keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  .msg.user { flex-direction:row-reverse; }
+  .msg-avatar {
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:0.9rem;
+  }
+  .msg-avatar.ai-av { background:linear-gradient(135deg, var(--card2), var(--accent2)); border:1px solid var(--accent2); }
+  .msg-avatar.user-av { background:var(--border); }
+  .msg-bubble {
+    max-width:72%; padding:12px 16px; border-radius:16px;
+    font-size:0.87rem; line-height:1.6;
+  }
+  .msg.ai .msg-bubble { background:var(--card); border:1px solid var(--border); border-bottom-left-radius:4px; }
+  .msg.user .msg-bubble { background:var(--accent2); color:#fff; border-bottom-right-radius:4px; }
+  .msg-image-preview {
+    width:180px; height:120px;
+    background:linear-gradient(135deg, var(--card2), var(--border));
+    border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:2.5rem; margin-bottom:8px; border:1px solid var(--border);
+  }
+  .diagnosis-card {
+    background:var(--card2); border:1px solid var(--border); border-radius:10px;
+    padding:12px; margin-top:8px;
+  }
+  .diagnosis-tag { font-size:0.7rem; font-weight:600; color:var(--danger); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
+  .diagnosis-name { font-size:0.95rem; font-weight:600; margin-bottom:6px; }
+  .diagnosis-detail { font-size:0.8rem; color:var(--muted); line-height:1.5; }
+  .confidence-bar { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .conf-label { font-size:0.72rem; color:var(--muted); }
+  .conf-track { flex:1; height:4px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .conf-fill { height:100%; background:linear-gradient(90deg, var(--accent2), var(--accent)); border-radius:4px; }
+  .typing-indicator { display:flex; align-items:center; gap:4px; padding:4px 0; }
+  .typing-dot { width:7px; height:7px; border-radius:50%; background:var(--muted); animation:typingBounce 1.2s infinite; }
+  .typing-dot:nth-child(2){animation-delay:0.2s} .typing-dot:nth-child(3){animation-delay:0.4s}
+  @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  /* Read Aloud */
+  .msg-actions { display:flex; align-items:center; gap:6px; margin-top:6px; padding-left:46px; }
+  .read-aloud-btn {
+    display:flex; align-items:center; gap:5px; font-size:0.72rem; padding:4px 11px;
+    border-radius:20px; cursor:pointer; border:1px solid rgba(126,200,227,0.25);
+    background:rgba(126,200,227,0.08); color:#7ec8e3;
+    font-family:'DM Sans', sans-serif; font-weight:500;
+  }
+  .read-aloud-btn:hover { background:rgba(126,200,227,0.18); border-color:#7ec8e3; }
+  .read-aloud-btn.speaking { border-color:#7ec8e3; background:rgba(126,200,227,0.2); animation:speakPulse 1.5s infinite; }
+  @keyframes speakPulse { 0%,100%{box-shadow:0 0 0 0 rgba(126,200,227,0.3)} 50%{box-shadow:0 0 0 5px rgba(126,200,227,0)} }
+  .speaker-icon { display:inline-block; }
+  .read-aloud-btn.speaking .speaker-icon { animation:speakerBounce 0.5s infinite alternate; }
+  @keyframes speakerBounce { from{transform:scale(1)} to{transform:scale(1.3)} }
+
+  /* Upload area */
+  .chat-input-area {
+    padding:14px 18px; background:var(--bg2); border-top:1px solid var(--border);
+    display:flex; justify-content:center; flex-shrink:0;
+  }
+  .upload-row { display:flex; align-items:center; justify-content:center; width:100%; gap:0; }
+  .upload-btn-big {
+    display:flex; align-items:center; gap:10px; padding:11px 26px; border-radius:12px;
+    background:var(--card); border:1.5px solid var(--border); color:var(--muted);
+    font-family:'DM Sans', sans-serif; font-size:0.87rem; font-weight:500; cursor:pointer;
+  }
+  .upload-btn-big:hover { border-color:var(--accent2); color:var(--accent); background:rgba(78,207,98,0.07); transform:translateY(-1px); }
+  .upload-btn-big.active { border-color:var(--accent); color:var(--accent); background:rgba(78,207,98,0.1); }
+  .upload-preview {
+    display:none; background:var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:10px; margin-right:10px; align-items:center; gap:10px;
+  }
+  .upload-preview.show { display:flex; }
+  .preview-thumb {
+    width:56px; height:46px; background:var(--card2); border-radius:6px;
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; overflow:hidden;
+  }
+  .preview-thumb img { width:100%; height:100%; object-fit:cover; border-radius:5px; }
+  .preview-info { flex:1; }
+  .preview-name { font-size:0.78rem; font-weight:500; }
+  .preview-size { font-size:0.7rem; color:var(--muted); }
+  .preview-remove { cursor:pointer; color:var(--muted); font-size:1.1rem; padding:4px; }
+  .preview-remove:hover { color:var(--danger); }
+  .preview-send {
+    padding:7px 14px; border-radius:8px; background:var(--accent2); border:none;
+    color:#fff; font-family:'DM Sans', sans-serif; font-size:0.8rem; font-weight:600;
+    cursor:pointer; white-space:nowrap;
+  }
+  .preview-send:hover { background:var(--accent); }
+
+  /* ── PRODUCTS ── */
+  .products-feed { flex:1; overflow-y:auto; padding:8px 10px 16px; }
+  .products-feed::-webkit-scrollbar { width:3px; }
+  .products-feed::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  .product-card {
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:13px; margin-bottom:8px; cursor:pointer; transition:all 0.2s;
+  }
+  .product-card:hover { border-color:var(--accent2); transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+  .product-icon {
+    width:40px; height:40px; background:linear-gradient(135deg, var(--card2), var(--border));
+    border-radius:9px; display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem; margin-bottom:9px;
+  }
+  .product-name { font-size:0.85rem; font-weight:600; margin-bottom:3px; }
+  .product-desc { font-size:0.73rem; color:var(--muted); line-height:1.4; margin-bottom:9px; }
+  .product-meta { display:flex; align-items:center; justify-content:space-between; }
+  .product-price { font-family:'Space Mono', monospace; font-size:0.83rem; color:var(--accent); font-weight:700; }
+  .product-badge { font-size:0.63rem; padding:3px 7px; border-radius:20px; font-weight:600; }
+  .badge-organic { background:rgba(78,207,98,0.15); color:var(--accent); }
+  .badge-chemical { background:rgba(232,197,71,0.15); color:var(--warn); }
+  .badge-bio { background:rgba(126,200,227,0.15); color:#7ec8e3; }
+  .product-rating { display:flex; align-items:center; gap:4px; font-size:0.7rem; color:var(--muted); margin-top:5px; }
+  .stars { color:var(--warn); letter-spacing:-1px; }
+  .add-to-cart {
+    width:100%; margin-top:9px; padding:7px; border-radius:8px;
+    background:transparent; border:1px solid var(--border); color:var(--muted);
+    font-family:'DM Sans', sans-serif; font-size:0.76rem; cursor:pointer; transition:all 0.2s;
+  }
+  .add-to-cart:hover { border-color:var(--accent2); background:rgba(61,184,79,0.1); color:var(--accent); }
+
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+  /* ════════════════════════════════════
+     RESPONSIVE — TABLET (≤900px)
+     Panels overlay on top of chat
+  ════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .logo span { display: none; }
+    .toggle-label { display: none; }
+    .status-dot + span { display: none; }
+
+    .panel {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 0 !important;
+      z-index: 50;
+      box-shadow: none;
+      transition: width 0.32s cubic-bezier(0.4,0,0.2,1), box-shadow 0.32s;
+    }
+    .panel.left { left: 0; }
+    .panel.right { right: 0; }
+    .panel.open {
+      width: 300px !important;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+    }
+    .panel.right.open {
+      box-shadow: -4px 0 24px rgba(0,0,0,0.4);
+    }
+
+    /* Backdrop when panel open */
+    .panel-backdrop {
+      display: none;
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 45;
+    }
+    .panel-backdrop.show { display: block; }
+
+    .msg-bubble { max-width: 85%; }
+    .chat-messages { padding: 16px; }
+    .chat-header { padding: 12px 16px; }
+    .chat-subtitle { display: none; }
+  }
+
+  /* ════════════════════════════════════
+     RESPONSIVE — MOBILE (≤600px)
+     Bottom nav bar, full screen panels,
+     compact header
+  ════════════════════════════════════ */
+  @media (max-width: 600px) {
+    body { height: 100dvh; }
+
+    nav {
+      padding: 0 12px;
+      height: 52px;
+    }
+    .logo { font-size: 1.1rem; gap: 8px; }
+    .logo-icon { width: 30px; height: 30px; font-size: 1rem; }
+    .nav-btn.outline:not(.icon-only) { display: none; }
+    .nav-btn.primary { display: none; }
+
+    /* App body shrinks to leave room for bottom bar */
+    .app-body {
+      padding-bottom: 60px;
+    }
+
+    /* Full-width panels on mobile */
+    .panel.open { width: 100vw !important; }
+    .panel-inner { width: 100vw; }
+
+    /* Bottom navigation bar */
+    .bottom-nav {
+      display: flex !important;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      z-index: 200;
+      align-items: stretch;
+    }
+    .bottom-nav-btn {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem; font-weight: 500;
+      padding: 6px 4px;
+      transition: color 0.2s;
+      border-top: 2px solid transparent;
+    }
+    .bottom-nav-btn .bnav-icon { font-size: 1.3rem; line-height: 1; }
+    .bottom-nav-btn:hover,
+    .bottom-nav-btn.active { color: var(--accent); border-top-color: var(--accent); }
+
+    /* Compact chat */
+    .chat-messages { padding: 12px; gap: 12px; }
+    .chat-header { padding: 10px 12px; gap: 10px; }
+    .ai-avatar { width: 34px; height: 34px; font-size: 0.95rem; }
+    .chat-title { font-size: 0.9rem; }
+    .chat-subtitle { display: none; }
+    .chat-header > div:last-child { display: none; }
+
+    /* Compact input area */
+    .chat-input-area { padding: 10px 12px; }
+    .upload-btn-big { padding: 10px 18px; font-size: 0.82rem; }
+
+    /* Bubbles full width */
+    .msg-bubble { max-width: 88%; font-size: 0.84rem; padding: 10px 13px; }
+    .msg-actions { padding-left: 36px; }
+
+    /* Compact upload preview */
+    .upload-preview { flex-wrap: wrap; }
+    .preview-info { min-width: 0; }
+    .preview-name { font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
+  }
+
+  /* Bottom nav hidden on desktop/tablet by default */
+  .bottom-nav { display: none; }
+
+  /* ════════════════════════════════════
+     RESPONSIVE — LARGE DESKTOP (≥1280px)
+     Wider panels
+  ════════════════════════════════════ */
+  @media (min-width: 1280px) {
+    .panel.open { width: 340px; }
+    .panel-inner { width: 340px; }
+    .msg-bubble { max-width: 68%; }
+    nav { padding: 0 28px; }
+  }
+
+  @media (min-width: 1600px) {
+    .panel.open { width: 380px; }
+    .panel-inner { width: 380px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <!-- Left panel toggle in nav -->
+    <button class="nav-btn outline" id="newsNavBtn" onclick="togglePanel('left')" title="News & Alerts" style="padding:7px 10px;font-size:1rem;">📰</button>
+    <div class="logo">
+      <div class="logo-icon">🌿</div>
+      Fasal <span>/ Digital Doctor for Farmers</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="status-dot"></div>
+    <span style="font-size:0.78rem;color:var(--muted)">AI Online</span>
+    <button class="nav-btn outline">🌐 EN / हिन्दी</button>
+    <div class="theme-toggle-wrap" onclick="toggleTheme()" title="Toggle light/dark">
+      <span class="t-icon" id="themeIcon">🌙</span>
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="toggle-label" id="themeLabel">Dark</span>
+    </div>
+    <!-- Right panel toggle in nav -->
+    <button class="nav-btn outline" id="shopNavBtn" onclick="togglePanel('right')" title="Crop Protection Shop" style="padding:7px 10px;font-size:1rem;">🛡️</button>
+    <button class="nav-btn primary">+ New Scan</button>
+  </div>
+</nav>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- Panel backdrop (mobile/tablet overlay) -->
+  <div class="panel-backdrop" id="panelBackdrop" onclick="closeAllPanels()"></div>
+
+  <!-- LEFT PANEL: NEWS & ALERTS -->
+  <div class="panel left" id="panelLeft">
+    <div class="panel-inner">
+      <div class="sidebar-header">
+        <span class="sidebar-title">📰 Crop News & Alerts</span>
+        <span class="tag-pill active">Live</span>
+      </div>
+
+      <!-- Slideshow -->
+      <div class="slideshow-wrap">
+        <div class="slides" id="slides"></div>
+        <div class="slide-arrows">
+          <div class="sarrow" onclick="prevSlide()">‹</div>
+          <div class="sarrow" onclick="nextSlide()">›</div>
+        </div>
+      </div>
+      <div class="slide-dots" id="slideDots"></div>
+
+      <!-- Filter + List -->
+      <div class="news-filter">
+        <span class="tag-pill active" onclick="filterNews(this,'all')">All</span>
+        <span class="tag-pill inactive" onclick="filterNews(this,'disease')">Disease</span>
+        <span class="tag-pill inactive" onclick="filterNews(this,'tip')">Tips</span>
+        <span class="tag-pill inactive" onclick="filterNews(this,'market')">Market</span>
+        <span class="tag-pill inactive" onclick="filterNews(this,'weather')">Weather</span>
+      </div>
+      <div class="news-feed" id="newsFeed"></div>
+    </div>
+  </div>
+
+  <!-- CENTER: CHAT -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <div class="ai-avatar">🤖</div>
+      <div>
+        <div class="chat-title">Fasal AI Assistant</div>
+        <div class="chat-subtitle">Crop Disease Detection · Treatment Advice · Image Analysis</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button class="nav-btn outline" style="font-size:0.75rem;">📋 History</button>
+        <button class="nav-btn outline" style="font-size:0.75rem;">🌍 Translate</button>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-area">
+      <div class="upload-row">
+        <div class="upload-preview" id="uploadPreview">
+          <div class="preview-thumb" id="previewThumb">🖼️</div>
+          <div class="preview-info">
+            <div class="preview-name" id="previewName">crop_photo.jpg</div>
+            <div class="preview-size">Ready for AI disease analysis</div>
+          </div>
+          <button class="preview-send" onclick="submitImage()">Analyze ➤</button>
+          <div class="preview-remove" onclick="removeUpload()">✕</div>
+        </div>
+        <button class="upload-btn-big" id="imgBtn" onclick="document.getElementById('imageInput').click()">
+          📸 Upload Crop Photo
+        </button>
+      </div>
+    </div>
+    <input type="file" id="imageInput" style="display:none" accept="image/*" onchange="handleImageUpload(this)">
+  </div>
+
+  <!-- RIGHT PANEL: CROP PROTECTION PRODUCTS -->
+  <div class="panel right" id="panelRight">
+    <div class="panel-inner">
+      <div class="sidebar-header">
+        <span class="sidebar-title">🛡️ Crop Protection</span>
+        <span class="tag-pill active">Shop</span>
+      </div>
+      <div class="news-filter" style="gap:5px;">
+        <span class="tag-pill active">All</span>
+        <span class="tag-pill inactive">Fungicide</span>
+        <span class="tag-pill inactive">Pesticide</span>
+        <span class="tag-pill inactive">Organic</span>
+      </div>
+      <div class="products-feed" id="productsFeed"></div>
+    </div>
+  </div>
+
+</div><!-- end app-body -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-btn" id="bnavNews" onclick="togglePanelMobile('left')">
+    <span class="bnav-icon">📰</span>News
+  </button>
+  <button class="bottom-nav-btn" id="bnavChat" onclick="closePanelMobileGoChat()" style="color:var(--accent);border-top-color:var(--accent)">
+    <span class="bnav-icon">🤖</span>Chat
+  </button>
+  <button class="bottom-nav-btn" id="bnavShop" onclick="togglePanelMobile('right')">
+    <span class="bnav-icon">🛡️</span>Shop
+  </button>
+</nav>
+
+<script>
+// ═══════════════════════════════════════
+// PANEL TOGGLE
+// ═══════════════════════════════════════
+function isMobileTablet() { return window.innerWidth <= 900; }
+
+function togglePanel(side) {
+  const panel = document.getElementById(side === 'left' ? 'panelLeft' : 'panelRight');
+  const otherPanel = document.getElementById(side === 'left' ? 'panelRight' : 'panelLeft');
+  const backdrop = document.getElementById('panelBackdrop');
+  const isOpening = !panel.classList.contains('open');
+
+  // Close the other panel first on tablet/mobile
+  if (isMobileTablet() && isOpening) {
+    otherPanel.classList.remove('open');
+  }
+
+  panel.classList.toggle('open');
+
+  // Show/hide backdrop on tablet/mobile
+  if (isMobileTablet()) {
+    const anyOpen = document.getElementById('panelLeft').classList.contains('open') ||
+                    document.getElementById('panelRight').classList.contains('open');
+    backdrop.classList.toggle('show', anyOpen);
+  }
+}
+
+function togglePanelMobile(side) {
+  const panel = document.getElementById(side === 'left' ? 'panelLeft' : 'panelRight');
+  const isOpening = !panel.classList.contains('open');
+  togglePanel(side);
+  // Update bottom nav active states
+  document.getElementById('bnavNews').classList.toggle('active', side === 'left' && isOpening);
+  document.getElementById('bnavShop').classList.toggle('active', side === 'right' && isOpening);
+  document.getElementById('bnavChat').classList.toggle('active', false);
+  if (!isOpening) {
+    document.getElementById('bnavChat').classList.add('active');
+  }
+}
+
+function closePanelMobileGoChat() {
+  closeAllPanels();
+  document.getElementById('bnavChat').classList.add('active');
+  document.getElementById('bnavNews').classList.remove('active');
+  document.getElementById('bnavShop').classList.remove('active');
+}
+
+function closeAllPanels() {
+  document.getElementById('panelLeft').classList.remove('open');
+  document.getElementById('panelRight').classList.remove('open');
+  document.getElementById('panelBackdrop').classList.remove('show');
+  document.getElementById('bnavChat').classList.add('active');
+  document.getElementById('bnavNews').classList.remove('active');
+  document.getElementById('bnavShop').classList.remove('active');
+}
+
+// ═══════════════════════════════════════
+// NEWS DATA
+// ═══════════════════════════════════════
+const newsItems = [
+  { type:'disease', title:'Wheat Rust Alert: High Risk in Punjab Region This Season', time:'2h ago', crop:'Wheat', icon:'⚠️' },
+  { type:'tip', title:'Top 5 Natural Ways to Prevent Powdery Mildew in Grapes', time:'4h ago', crop:'Grapes', icon:'💡' },
+  { type:'market', title:'Onion prices surge 18% ahead of monsoon season — protect your yield', time:'5h ago', crop:'Onion', icon:'📈' },
+  { type:'weather', title:'Heavy Rainfall Expected: Precautions for Paddy Farmers in Haryana', time:'6h ago', crop:'Paddy', icon:'🌧️' },
+  { type:'disease', title:'New Strain of Tomato Leaf Curl Virus Detected in Maharashtra', time:'8h ago', crop:'Tomato', icon:'🔴' },
+  { type:'tip', title:'How to Increase Mango Yield by 30% with Proper Pruning', time:'12h ago', crop:'Mango', icon:'🥭' },
+  { type:'market', title:'Soybean futures rise: Good time to sell your stockpile', time:'1d ago', crop:'Soybean', icon:'📊' },
+  { type:'weather', title:'Frost Warning Issued: Protect your vegetable crops tonight', time:'1d ago', crop:'Vegetables', icon:'🌨️' },
+];
+
+// ═══════════════════════════════════════
+// SLIDESHOW (top 4 items)
+// ═══════════════════════════════════════
+let slideIndex = 0;
+const slideshowItems = newsItems.slice(0, 4);
+let slideTimer;
+
+function buildSlideshow() {
+  const wrap = document.getElementById('slides');
+  const dots = document.getElementById('slideDots');
+  wrap.innerHTML = slideshowItems.map(n => `
+    <div class="slide">
+      <div class="slide-tag ${n.type}">${n.icon} ${n.type.toUpperCase()}</div>
+      <div class="slide-title">${n.title}</div>
+      <div class="slide-meta"><span>🌾 ${n.crop}</span><span>${n.time}</span></div>
+    </div>`).join('');
+  dots.innerHTML = slideshowItems.map((_,i) => `<div class="sdot ${i===0?'active':''}" onclick="goSlide(${i})"></div>`).join('');
+}
+
+function goSlide(i) {
+  slideIndex = i;
+  document.getElementById('slides').style.transform = `translateX(-${i * 100}%)`;
+  document.querySelectorAll('.sdot').forEach((d,j) => d.classList.toggle('active', j===i));
+  clearInterval(slideTimer);
+  slideTimer = setInterval(nextSlide, 4000);
+}
+function nextSlide() { goSlide((slideIndex + 1) % slideshowItems.length); }
+function prevSlide() { goSlide((slideIndex - 1 + slideshowItems.length) % slideshowItems.length); }
+
+buildSlideshow();
+slideTimer = setInterval(nextSlide, 4000);
+
+// ═══════════════════════════════════════
+// NEWS LIST
+// ═══════════════════════════════════════
+function renderNewsCards(items) {
+  document.getElementById('newsFeed').innerHTML = items.map(n => `
+    <div class="news-card ${n.type==='disease'?'alert':n.type==='weather'?'warn':''}">
+      <div class="news-tag ${n.type}">${n.icon} ${n.type.toUpperCase()}</div>
+      <div class="news-title">${n.title}</div>
+      <div class="news-meta"><span>🌾 ${n.crop}</span><span>${n.time}</span></div>
+    </div>`).join('');
+}
+renderNewsCards(newsItems);
+
+function filterNews(el, type) {
+  document.querySelectorAll('.news-filter .tag-pill').forEach(p => p.className = 'tag-pill inactive');
+  el.className = 'tag-pill active';
+  renderNewsCards(type === 'all' ? newsItems : newsItems.filter(n => n.type === type));
+}
+
+// ═══════════════════════════════════════
+// PRODUCTS
+// ═══════════════════════════════════════
+const products = [
+  { icon:'🧪', name:'Mancozeb 75% WP', desc:'Broad-spectrum fungicide for blight, anthracnose, and downy mildew control.', price:'₹320', badge:'Chemical', badgeClass:'badge-chemical', rating:'4.5', reviews:'128' },
+  { icon:'🌿', name:'Neem Oil Spray 10%', desc:'Organic pesticide effective against aphids, whitefly, and scale insects.', price:'₹180', badge:'Organic', badgeClass:'badge-organic', rating:'4.8', reviews:'312' },
+  { icon:'🔬', name:'Trichoderma Bio-Agent', desc:'Biological fungicide that controls Fusarium, Pythium, and soil-borne pathogens.', price:'₹450', badge:'Bio', badgeClass:'badge-bio', rating:'4.6', reviews:'89' },
+  { icon:'💊', name:'Carbendazim 50% WP', desc:'Systemic fungicide for powdery mildew, smut, and seed treatment.', price:'₹275', badge:'Chemical', badgeClass:'badge-chemical', rating:'4.3', reviews:'201' },
+  { icon:'🌱', name:'Jeevamrit Organic Kit', desc:'Traditional biofertilizer and pest deterrent — zero chemical formula.', price:'₹90', badge:'Organic', badgeClass:'badge-organic', rating:'4.9', reviews:'540' },
+  { icon:'🧴', name:'Imidacloprid 17.8% SL', desc:'Systemic insecticide for sucking pests in cotton, rice, and vegetables.', price:'₹395', badge:'Chemical', badgeClass:'badge-chemical', rating:'4.2', reviews:'167' },
+];
+document.getElementById('productsFeed').innerHTML = products.map(p => `
+  <div class="product-card">
+    <div class="product-icon">${p.icon}</div>
+    <div class="product-name">${p.name}</div>
+    <div class="product-desc">${p.desc}</div>
+    <div class="product-meta">
+      <span class="product-price">${p.price}</span>
+      <span class="product-badge ${p.badgeClass}">${p.badge}</span>
+    </div>
+    <div class="product-rating"><span class="stars">★★★★☆</span> ${p.rating} (${p.reviews})</div>
+    <button class="add-to-cart" onclick="addCart(this,'${p.name}')">+ Add to Cart</button>
+  </div>`).join('');
+
+function addCart(btn, name) {
+  btn.textContent = '✓ Added!';
+  btn.style.borderColor = 'var(--accent)'; btn.style.color = 'var(--accent)'; btn.style.background = 'rgba(78,207,98,0.1)';
+  setTimeout(() => { btn.textContent = '+ Add to Cart'; btn.style.borderColor=''; btn.style.color=''; btn.style.background=''; }, 2000);
+}
+
+// ═══════════════════════════════════════
+// CHAT
+// ═══════════════════════════════════════
+let hasImage = false, imageDataURL = null, aiMsgCounter = 0, currentSpeech = null, speakingBtn = null;
+
+const responses = {
+  image: {
+    text: "I've scanned your uploaded image using AI disease detection. Here's my diagnosis:",
+    diagnosis: { name: 'Alternaria Leaf Blight', confidence: 78, desc: 'Brown concentric ring spots on leaves. Common in onion, carrot. Recommend Mancozeb 75% WP at 2g/L water, apply weekly for 3 weeks.' }
+  }
+};
+
+function speakMessage(btn, bubbleId) {
+  if (btn === speakingBtn) { stopSpeech(); return; }
+  stopSpeech();
+  const bubble = document.getElementById(bubbleId);
+  if (!bubble || !('speechSynthesis' in window)) return;
+  const text = bubble.innerText || bubble.textContent;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-IN'; utter.rate = 0.92; utter.pitch = 1.05;
+  const voices = speechSynthesis.getVoices();
+  const v = voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female')) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+  if (v) utter.voice = v;
+  utter.onstart = () => { btn.classList.add('speaking'); btn.innerHTML = '<span class="speaker-icon">🔈</span> Stop'; speakingBtn = btn; currentSpeech = utter; };
+  utter.onend = utter.onerror = () => { resetSpeakBtn(btn); speakingBtn = null; currentSpeech = null; };
+  speechSynthesis.speak(utter);
+}
+function stopSpeech() { if (currentSpeech) speechSynthesis.cancel(); if (speakingBtn) resetSpeakBtn(speakingBtn); speakingBtn = null; currentSpeech = null; }
+function resetSpeakBtn(btn) { btn.classList.remove('speaking'); btn.innerHTML = '<span class="speaker-icon">🔊</span> Read Aloud'; }
+
+function appendAIMessage(content) {
+  const msgs = document.getElementById('chatMessages');
+  const bubbleId = 'aibubble_' + (aiMsgCounter++);
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
+    <div class="msg ai"><div class="msg-avatar ai-av">🤖</div><div class="msg-bubble" id="${bubbleId}">${content}</div></div>
+    <div class="msg-actions"><button class="read-aloud-btn" onclick="speakMessage(this,'${bubbleId}')"><span class="speaker-icon">🔊</span> Read Aloud</button></div>`;
+  msgs.appendChild(wrapper);
+  msgs.scrollTop = msgs.scrollHeight;
+  return bubbleId;
+}
+
+function appendDiagnosis(diagnosis, bubbleId) {
+  const bubble = document.getElementById(bubbleId);
+  if (bubble && diagnosis) {
+    const card = document.createElement('div');
+    card.className = 'diagnosis-card';
+    card.innerHTML = `<div class="diagnosis-tag">🔬 AI Diagnosis</div><div class="diagnosis-name">${diagnosis.name}</div><div class="diagnosis-detail">${diagnosis.desc}</div><div class="confidence-bar"><span class="conf-label">Confidence</span><div class="conf-track"><div class="conf-fill" style="width:${diagnosis.confidence}%"></div></div><span class="conf-label">${diagnosis.confidence}%</span></div>`;
+    bubble.appendChild(card);
+    document.getElementById('chatMessages').scrollTop = 99999;
+  }
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = 'typingMsg';
+  div.innerHTML = `<div class="msg-avatar ai-av">🤖</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { const t = document.getElementById('typingMsg'); if (t) t.remove(); }
+
+function appendUserMessage(imgSrc) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div'); div.className = 'msg user';
+  div.innerHTML = `<div class="msg-avatar user-av">👨‍🌾</div><div class="msg-bubble"><div class="msg-image-preview" style="display:flex;overflow:hidden;">${imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:9px;" alt="crop">` : '🌿'}</div>Please analyze this crop image for diseases.</div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function submitImage() {
+  if (!hasImage) return;
+  stopSpeech(); appendUserMessage(imageDataURL); removeUpload(); showTyping();
+  setTimeout(() => { removeTyping(); const resp = responses.image; const id = appendAIMessage(resp.text); if (resp.diagnosis) setTimeout(() => appendDiagnosis(resp.diagnosis, id), 200); }, 1600);
+}
+
+function handleImageUpload(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0]; hasImage = true;
+  const reader = new FileReader();
+  reader.onload = e => { imageDataURL = e.target.result; document.getElementById('previewThumb').innerHTML = `<img src="${imageDataURL}" alt="preview">`; };
+  reader.readAsDataURL(file);
+  document.getElementById('previewName').textContent = file.name;
+  document.getElementById('uploadPreview').classList.add('show');
+  document.getElementById('imgBtn').classList.add('active');
+}
+
+function removeUpload() {
+  document.getElementById('uploadPreview').classList.remove('show');
+  document.getElementById('imageInput').value = '';
+  document.getElementById('previewThumb').innerHTML = '🖼️';
+  hasImage = false; imageDataURL = null;
+  document.getElementById('imgBtn').classList.remove('active');
+}
+
+// Welcome
+(function() {
+  appendAIMessage(`🌱 <strong>Namaste, Farmer!</strong> I'm Fasal AI, your digital crop doctor.<br><br>
+    📸 <strong>Disease Detection</strong> — Upload a photo of your crop<br>
+    💊 <strong>Treatment Plans</strong> — Get medicine &amp; pesticide advice<br>
+    🌦️ <strong>Weather &amp; Seasonal Tips</strong><br><br>
+    Tap 📰 for crop news &amp; alerts, 🛡️ for protection products, or upload a photo below!`);
+})();
+
+// Theme
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
+  document.getElementById('themeLabel').textContent = isLight ? 'Light' : 'Dark';
+}
+
+if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+</script>
+</body>
+</html>

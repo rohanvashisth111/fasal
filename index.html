@@ -317,37 +317,6 @@
   }
   .preview-send:hover { background:var(--accent); }
 
-  /* ── PRODUCTS ── */
-  .products-feed { flex:1; overflow-y:auto; padding:8px 10px 16px; }
-  .products-feed::-webkit-scrollbar { width:3px; }
-  .products-feed::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-  .product-card {
-    background:var(--card); border:1px solid var(--border); border-radius:12px;
-    padding:13px; margin-bottom:8px; cursor:pointer; transition:all 0.2s;
-  }
-  .product-card:hover { border-color:var(--accent2); transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.3); }
-  .product-icon {
-    width:40px; height:40px; background:linear-gradient(135deg, var(--card2), var(--border));
-    border-radius:9px; display:flex; align-items:center; justify-content:center;
-    font-size:1.3rem; margin-bottom:9px;
-  }
-  .product-name { font-size:0.85rem; font-weight:600; margin-bottom:3px; }
-  .product-desc { font-size:0.73rem; color:var(--muted); line-height:1.4; margin-bottom:9px; }
-  .product-meta { display:flex; align-items:center; justify-content:space-between; }
-  .product-price { font-family:'Space Mono', monospace; font-size:0.83rem; color:var(--accent); font-weight:700; }
-  .product-badge { font-size:0.63rem; padding:3px 7px; border-radius:20px; font-weight:600; }
-  .badge-organic { background:rgba(78,207,98,0.15); color:var(--accent); }
-  .badge-chemical { background:rgba(232,197,71,0.15); color:var(--warn); }
-  .badge-bio { background:rgba(126,200,227,0.15); color:#7ec8e3; }
-  .product-rating { display:flex; align-items:center; gap:4px; font-size:0.7rem; color:var(--muted); margin-top:5px; }
-  .stars { color:var(--warn); letter-spacing:-1px; }
-  .add-to-cart {
-    width:100%; margin-top:9px; padding:7px; border-radius:8px;
-    background:transparent; border:1px solid var(--border); color:var(--muted);
-    font-family:'DM Sans', sans-serif; font-size:0.76rem; cursor:pointer; transition:all 0.2s;
-  }
-  .add-to-cart:hover { border-color:var(--accent2); background:rgba(61,184,79,0.1); color:var(--accent); }
-
   ::-webkit-scrollbar { width:4px; }
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
@@ -488,6 +457,85 @@
     .panel.open { width: 380px; }
     .panel-inner { width: 380px; }
   }
+
+  /* ── MODAL OVERLAY ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; width: 90%; max-width: 480px;
+    max-height: 80vh; display: flex; flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.92) translateY(10px)} to{opacity:1;transform:none} }
+
+  .modal-header {
+    padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .modal-title { font-size: 0.95rem; font-weight: 600; display:flex; align-items:center; gap:8px; }
+  .modal-close {
+    width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .modal-close:hover { border-color: var(--danger); color: var(--danger); }
+  .modal-body { flex: 1; overflow-y: auto; padding: 14px 16px; }
+  .modal-body::-webkit-scrollbar { width: 3px; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .modal-footer { padding: 12px 16px; border-top: 1px solid var(--border); display:flex; gap:8px; flex-shrink:0; }
+
+  /* History modal */
+  .history-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:0.85rem; }
+  .history-empty .empty-icon { font-size:2.5rem; margin-bottom:10px; }
+  .history-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+    position: relative;
+  }
+  .history-item:hover { border-color: var(--accent2); }
+  .history-item-title { font-size: 0.83rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .history-item-meta { font-size: 0.72rem; color: var(--muted); display:flex; gap:10px; }
+  .history-item-preview { font-size: 0.76rem; color: var(--muted); margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .history-item-actions { position:absolute; top:10px; right:10px; display:flex; gap:5px; }
+  .hist-action-btn {
+    padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; cursor: pointer;
+    border: 1px solid var(--border); background: transparent; font-family:'DM Sans',sans-serif;
+  }
+  .hist-action-btn.restore { color: var(--accent); border-color: rgba(78,207,98,0.3); }
+  .hist-action-btn.restore:hover { background: rgba(78,207,98,0.1); }
+  .hist-action-btn.del { color: var(--danger); border-color: rgba(232,96,96,0.3); }
+  .hist-action-btn.del:hover { background: rgba(232,96,96,0.1); }
+  .modal-action-btn {
+    flex: 1; padding: 8px; border-radius: 8px; font-family:'DM Sans',sans-serif;
+    font-size: 0.8rem; font-weight: 500; cursor: pointer; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); transition: all 0.2s;
+  }
+  .modal-action-btn:hover { border-color: var(--accent2); color: var(--accent); }
+  .modal-action-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+  .modal-action-btn.primary { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+  .modal-action-btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* Translate modal */
+  .lang-option {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    background: var(--card); border: 2px solid var(--border); border-radius: 12px;
+    margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .lang-option:hover { border-color: var(--accent2); }
+  .lang-option.selected { border-color: var(--accent); background: rgba(78,207,98,0.07); }
+  .lang-flag { font-size: 1.8rem; }
+  .lang-name { font-size: 0.92rem; font-weight: 600; }
+  .lang-native { font-size: 0.78rem; color: var(--muted); }
+  .lang-check { margin-left: auto; font-size: 1.1rem; color: var(--accent); opacity: 0; transition: opacity 0.2s; }
+  .lang-option.selected .lang-check { opacity: 1; }
+  .translate-note { font-size: 0.75rem; color: var(--muted); text-align:center; margin-top:10px; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -511,8 +559,6 @@
       <div class="toggle-track"><div class="toggle-thumb"></div></div>
       <span class="toggle-label" id="themeLabel">Dark</span>
     </div>
-    <!-- Right panel toggle in nav -->
-    <button class="nav-btn outline" id="shopNavBtn" onclick="togglePanel('right')" title="Crop Protection Shop" style="padding:7px 10px;font-size:1rem;">🛡️</button>
     <button class="nav-btn primary">+ New Scan</button>
   </div>
 </nav>
@@ -562,8 +608,8 @@
         <div class="chat-subtitle">Crop Disease Detection · Treatment Advice · Image Analysis</div>
       </div>
       <div style="margin-left:auto;display:flex;gap:8px;">
-        <button class="nav-btn outline" style="font-size:0.75rem;">📋 History</button>
-        <button class="nav-btn outline" style="font-size:0.75rem;">🌍 Translate</button>
+        <button class="nav-btn outline" style="font-size:0.75rem;" onclick="openHistory()">📋 History</button>
+        <button class="nav-btn outline" style="font-size:0.75rem;" id="translateBtn" onclick="openTranslate()">🌍 Translate</button>
       </div>
     </div>
 
@@ -588,24 +634,48 @@
     <input type="file" id="imageInput" style="display:none" accept="image/*" onchange="handleImageUpload(this)">
   </div>
 
-  <!-- RIGHT PANEL: CROP PROTECTION PRODUCTS -->
-  <div class="panel right" id="panelRight">
-    <div class="panel-inner">
-      <div class="sidebar-header">
-        <span class="sidebar-title">🛡️ Crop Protection</span>
-        <span class="tag-pill active">Shop</span>
-      </div>
-      <div class="news-filter" style="gap:5px;">
-        <span class="tag-pill active">All</span>
-        <span class="tag-pill inactive">Fungicide</span>
-        <span class="tag-pill inactive">Pesticide</span>
-        <span class="tag-pill inactive">Organic</span>
-      </div>
-      <div class="products-feed" id="productsFeed"></div>
+</div><!-- end app-body -->
+
+<!-- HISTORY MODAL -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📋 <span id="histModalTitle">Chat History</span></div>
+      <button class="modal-close" onclick="closeModal('historyModal')">✕</button>
+    </div>
+    <div class="modal-body" id="historyBody"></div>
+    <div class="modal-footer">
+      <button class="modal-action-btn danger" onclick="clearAllHistory()" id="clearAllBtn">🗑 Clear All</button>
+      <button class="modal-action-btn primary" onclick="saveCurrentSession()">💾 Save Current</button>
     </div>
   </div>
+</div>
 
-</div><!-- end app-body -->
+<!-- TRANSLATE MODAL -->
+<div class="modal-overlay" id="translateModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🌍 <span id="transModalTitle">Select Language</span></div>
+      <button class="modal-close" onclick="closeModal('translateModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="lang-option" id="langEN" onclick="setLanguage('en')">
+        <span class="lang-flag">🇬🇧</span>
+        <div><div class="lang-name">English</div><div class="lang-native">English</div></div>
+        <span class="lang-check">✓</span>
+      </div>
+      <div class="lang-option" id="langHI" onclick="setLanguage('hi')">
+        <span class="lang-flag">🇮🇳</span>
+        <div><div class="lang-name">Hindi</div><div class="lang-native">हिन्दी</div></div>
+        <span class="lang-check">✓</span>
+      </div>
+      <div class="translate-note" id="translateNote">Switching language will translate the interface and all chat messages.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-action-btn" onclick="closeModal('translateModal')" id="transCloseBtn">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- MOBILE BOTTOM NAV -->
 <nav class="bottom-nav" id="bottomNav">
@@ -614,9 +684,6 @@
   </button>
   <button class="bottom-nav-btn" id="bnavChat" onclick="closePanelMobileGoChat()" style="color:var(--accent);border-top-color:var(--accent)">
     <span class="bnav-icon">🤖</span>Chat
-  </button>
-  <button class="bottom-nav-btn" id="bnavShop" onclick="togglePanelMobile('right')">
-    <span class="bnav-icon">🛡️</span>Shop
   </button>
 </nav>
 
@@ -627,33 +694,24 @@
 function isMobileTablet() { return window.innerWidth <= 900; }
 
 function togglePanel(side) {
-  const panel = document.getElementById(side === 'left' ? 'panelLeft' : 'panelRight');
-  const otherPanel = document.getElementById(side === 'left' ? 'panelRight' : 'panelLeft');
+  const panel = document.getElementById('panelLeft');
   const backdrop = document.getElementById('panelBackdrop');
   const isOpening = !panel.classList.contains('open');
-
-  // Close the other panel first on tablet/mobile
-  if (isMobileTablet() && isOpening) {
-    otherPanel.classList.remove('open');
-  }
 
   panel.classList.toggle('open');
 
   // Show/hide backdrop on tablet/mobile
   if (isMobileTablet()) {
-    const anyOpen = document.getElementById('panelLeft').classList.contains('open') ||
-                    document.getElementById('panelRight').classList.contains('open');
-    backdrop.classList.toggle('show', anyOpen);
+    backdrop.classList.toggle('show', panel.classList.contains('open'));
   }
 }
 
 function togglePanelMobile(side) {
-  const panel = document.getElementById(side === 'left' ? 'panelLeft' : 'panelRight');
+  const panel = document.getElementById('panelLeft');
   const isOpening = !panel.classList.contains('open');
   togglePanel(side);
   // Update bottom nav active states
-  document.getElementById('bnavNews').classList.toggle('active', side === 'left' && isOpening);
-  document.getElementById('bnavShop').classList.toggle('active', side === 'right' && isOpening);
+  document.getElementById('bnavNews').classList.toggle('active', isOpening);
   document.getElementById('bnavChat').classList.toggle('active', false);
   if (!isOpening) {
     document.getElementById('bnavChat').classList.add('active');
@@ -664,16 +722,13 @@ function closePanelMobileGoChat() {
   closeAllPanels();
   document.getElementById('bnavChat').classList.add('active');
   document.getElementById('bnavNews').classList.remove('active');
-  document.getElementById('bnavShop').classList.remove('active');
 }
 
 function closeAllPanels() {
   document.getElementById('panelLeft').classList.remove('open');
-  document.getElementById('panelRight').classList.remove('open');
   document.getElementById('panelBackdrop').classList.remove('show');
   document.getElementById('bnavChat').classList.add('active');
   document.getElementById('bnavNews').classList.remove('active');
-  document.getElementById('bnavShop').classList.remove('active');
 }
 
 // ═══════════════════════════════════════
@@ -739,36 +794,6 @@ function filterNews(el, type) {
   document.querySelectorAll('.news-filter .tag-pill').forEach(p => p.className = 'tag-pill inactive');
   el.className = 'tag-pill active';
   renderNewsCards(type === 'all' ? newsItems : newsItems.filter(n => n.type === type));
-}
-
-// ═══════════════════════════════════════
-// PRODUCTS
-// ═══════════════════════════════════════
-const products = [
-  { icon:'🧪', name:'Mancozeb 75% WP', desc:'Broad-spectrum fungicide for blight, anthracnose, and downy mildew control.', price:'₹320', badge:'Chemical', badgeClass:'badge-chemical', rating:'4.5', reviews:'128' },
-  { icon:'🌿', name:'Neem Oil Spray 10%', desc:'Organic pesticide effective against aphids, whitefly, and scale insects.', price:'₹180', badge:'Organic', badgeClass:'badge-organic', rating:'4.8', reviews:'312' },
-  { icon:'🔬', name:'Trichoderma Bio-Agent', desc:'Biological fungicide that controls Fusarium, Pythium, and soil-borne pathogens.', price:'₹450', badge:'Bio', badgeClass:'badge-bio', rating:'4.6', reviews:'89' },
-  { icon:'💊', name:'Carbendazim 50% WP', desc:'Systemic fungicide for powdery mildew, smut, and seed treatment.', price:'₹275', badge:'Chemical', badgeClass:'badge-chemical', rating:'4.3', reviews:'201' },
-  { icon:'🌱', name:'Jeevamrit Organic Kit', desc:'Traditional biofertilizer and pest deterrent — zero chemical formula.', price:'₹90', badge:'Organic', badgeClass:'badge-organic', rating:'4.9', reviews:'540' },
-  { icon:'🧴', name:'Imidacloprid 17.8% SL', desc:'Systemic insecticide for sucking pests in cotton, rice, and vegetables.', price:'₹395', badge:'Chemical', badgeClass:'badge-chemical', rating:'4.2', reviews:'167' },
-];
-document.getElementById('productsFeed').innerHTML = products.map(p => `
-  <div class="product-card">
-    <div class="product-icon">${p.icon}</div>
-    <div class="product-name">${p.name}</div>
-    <div class="product-desc">${p.desc}</div>
-    <div class="product-meta">
-      <span class="product-price">${p.price}</span>
-      <span class="product-badge ${p.badgeClass}">${p.badge}</span>
-    </div>
-    <div class="product-rating"><span class="stars">★★★★☆</span> ${p.rating} (${p.reviews})</div>
-    <button class="add-to-cart" onclick="addCart(this,'${p.name}')">+ Add to Cart</button>
-  </div>`).join('');
-
-function addCart(btn, name) {
-  btn.textContent = '✓ Added!';
-  btn.style.borderColor = 'var(--accent)'; btn.style.color = 'var(--accent)'; btn.style.background = 'rgba(78,207,98,0.1)';
-  setTimeout(() => { btn.textContent = '+ Add to Cart'; btn.style.borderColor=''; btn.style.color=''; btn.style.background=''; }, 2000);
 }
 
 // ═══════════════════════════════════════
@@ -871,7 +896,7 @@ function removeUpload() {
     📸 <strong>Disease Detection</strong> — Upload a photo of your crop<br>
     💊 <strong>Treatment Plans</strong> — Get medicine &amp; pesticide advice<br>
     🌦️ <strong>Weather &amp; Seasonal Tips</strong><br><br>
-    Tap 📰 for crop news &amp; alerts, 🛡️ for protection products, or upload a photo below!`);
+    Tap 📰 for crop news &amp; alerts, or upload a photo below!`);
 })();
 
 // Theme
@@ -882,7 +907,322 @@ function toggleTheme() {
 }
 
 if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+
+// ═══════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+});
+
+// ═══════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════
+const HISTORY_KEY = 'fasal_chat_history';
+
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+function saveSessions(sessions) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(sessions));
+}
+
+function saveCurrentSession() {
+  const msgs = document.getElementById('chatMessages');
+  const allBubbles = msgs.querySelectorAll('.msg-bubble');
+  if (allBubbles.length === 0) return;
+  const preview = allBubbles[allBubbles.length - 1].innerText.slice(0, 80);
+  const session = {
+    id: Date.now(),
+    date: new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+    msgCount: allBubbles.length,
+    preview: preview,
+    html: msgs.innerHTML
+  };
+  const sessions = getSessions();
+  sessions.unshift(session);
+  saveSessions(sessions.slice(0, 20)); // keep max 20
+  renderHistoryBody();
+  // Flash save button
+  const btn = document.querySelector('#historyModal .modal-action-btn.primary');
+  if (btn) { const orig = btn.textContent; btn.textContent = '✓ Saved!'; setTimeout(() => btn.textContent = orig, 1500); }
+}
+
+function renderHistoryBody() {
+  const sessions = getSessions();
+  const body = document.getElementById('historyBody');
+  const isHindi = currentLang === 'hi';
+  if (sessions.length === 0) {
+    body.innerHTML = `<div class="history-empty"><div class="empty-icon">📭</div><div>${isHindi ? 'कोई सहेजा गया इतिहास नहीं' : 'No saved history yet'}</div><div style="font-size:0.72rem;margin-top:6px;color:var(--muted2)">${isHindi ? 'नीचे "वर्तमान सहेजें" पर टैप करें' : 'Tap "Save Current" below to save this session'}</div></div>`;
+    return;
+  }
+  body.innerHTML = sessions.map(s => `
+    <div class="history-item">
+      <div class="history-item-actions">
+        <button class="hist-action-btn restore" onclick="restoreSession(${s.id})">${isHindi ? 'लोड करें' : 'Load'}</button>
+        <button class="hist-action-btn del" onclick="deleteSession(${s.id})">✕</button>
+      </div>
+      <div class="history-item-title">💬 ${isHindi ? 'सत्र' : 'Session'} — ${s.date}</div>
+      <div class="history-item-meta"><span>🗨 ${s.msgCount} ${isHindi ? 'संदेश' : 'messages'}</span></div>
+      <div class="history-item-preview">${s.preview}…</div>
+    </div>`).join('');
+}
+
+function restoreSession(id) {
+  const sessions = getSessions();
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  if (!confirm(currentLang === 'hi' ? 'वर्तमान चैट की जगह यह सत्र लोड करें?' : 'Load this session? Current chat will be replaced.')) return;
+  document.getElementById('chatMessages').innerHTML = s.html;
+  closeModal('historyModal');
+}
+
+function deleteSession(id) {
+  const sessions = getSessions().filter(s => s.id !== id);
+  saveSessions(sessions);
+  renderHistoryBody();
+}
+
+function clearAllHistory() {
+  if (!confirm(currentLang === 'hi' ? 'सभी इतिहास हटाएं?' : 'Delete all chat history?')) return;
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistoryBody();
+}
+
+function openHistory() {
+  renderHistoryBody();
+  // Update modal text for language
+  document.getElementById('histModalTitle').textContent = currentLang === 'hi' ? 'चैट इतिहास' : 'Chat History';
+  document.getElementById('clearAllBtn').textContent = currentLang === 'hi' ? '🗑 सभी हटाएं' : '🗑 Clear All';
+  openModal('historyModal');
+}
+
+// Auto-save on every AI message
+const _origAppendAI = appendAIMessage;
+// We'll patch save into submitImage instead to avoid recursion
+const _origSubmitImage = submitImage;
+
+// ═══════════════════════════════════════
+// TRANSLATE (EN ↔ HI)
+// ═══════════════════════════════════════
+let currentLang = 'en';
+
+const uiStrings = {
+  en: {
+    aiOnline: 'AI Online',
+    langBtn: '🌐 EN / हिन्दी',
+    chatTitle: 'Fasal AI Assistant',
+    chatSubtitle: 'Crop Disease Detection · Treatment Advice · Image Analysis',
+    histBtn: '📋 History',
+    transBtn: '🌍 Translate',
+    historyBtn: '📋 History',
+    uploadBtn: '📸 Upload Crop Photo',
+    analyzeBtn: 'Analyze ➤',
+    previewSize: 'Ready for AI disease analysis',
+    newScan: '+ New Scan',
+    readAloud: '🔊 Read Aloud',
+    stop: '🔈 Stop',
+    transModalTitle: 'Select Language',
+    translateNote: 'Switching language will translate the interface and all chat messages.',
+    transClose: 'Cancel',
+    newsTitle: '📰 Crop News & Alerts',
+    liveTag: 'Live',
+    historyLbl: 'History',
+    translateLbl: 'Translate',
+  },
+  hi: {
+    aiOnline: 'AI ऑनलाइन',
+    langBtn: '🌐 हिन्दी / EN',
+    chatTitle: 'फसल AI सहायक',
+    chatSubtitle: 'फसल रोग पहचान · उपचार सलाह · छवि विश्लेषण',
+    histBtn: '📋 इतिहास',
+    transBtn: '🌍 भाषा',
+    historyBtn: '📋 इतिहास',
+    uploadBtn: '📸 फसल फोटो अपलोड करें',
+    analyzeBtn: 'विश्लेषण करें ➤',
+    previewSize: 'AI रोग विश्लेषण के लिए तैयार',
+    newScan: '+ नई स्कैन',
+    readAloud: '🔊 जोर से पढ़ें',
+    stop: '🔈 रोकें',
+    transModalTitle: 'भाषा चुनें',
+    translateNote: 'भाषा बदलने से इंटरफ़ेस और सभी संदेश अनुवादित हो जाएंगे।',
+    transClose: 'रद्द करें',
+    newsTitle: '📰 फसल समाचार और अलर्ट',
+    liveTag: 'लाइव',
+    historyLbl: 'इतिहास',
+    translateLbl: 'भाषा',
+  }
+};
+
+// Chat message translations (keyed to initial welcome + image response)
+const chatTranslations = {
+  en: {
+    welcome: `🌱 <strong>Namaste, Farmer!</strong> I'm Fasal AI, your digital crop doctor.<br><br>
+      📸 <strong>Disease Detection</strong> — Upload a photo of your crop<br>
+      💊 <strong>Treatment Plans</strong> — Get medicine &amp; pesticide advice<br>
+      🌦️ <strong>Weather &amp; Seasonal Tips</strong><br><br>
+      Tap 📰 for crop news &amp; alerts, or upload a photo below!`,
+    imgResponse: "I've scanned your uploaded image using AI disease detection. Here's my diagnosis:",
+    userMsg: 'Please analyze this crop image for diseases.',
+    diagnosisTag: '🔬 AI Diagnosis',
+    confidence: 'Confidence',
+    diagnosisName: 'Alternaria Leaf Blight',
+    diagnosisDesc: 'Brown concentric ring spots on leaves. Common in onion, carrot. Recommend Mancozeb 75% WP at 2g/L water, apply weekly for 3 weeks.',
+    langSwitchMsg: `🌐 <strong>Language set to English.</strong> All messages are now in English.`,
+  },
+  hi: {
+    welcome: `🌱 <strong>नमस्ते, किसान भाई!</strong> मैं फसल AI हूँ, आपका डिजिटल फसल डॉक्टर।<br><br>
+      📸 <strong>रोग पहचान</strong> — अपनी फसल की फोटो अपलोड करें<br>
+      💊 <strong>उपचार योजना</strong> — दवाई और कीटनाशक की सलाह पाएं<br>
+      🌦️ <strong>मौसम और मौसमी सुझाव</strong><br><br>
+      📰 समाचार और अलर्ट के लिए, या नीचे फोटो अपलोड करें!`,
+    imgResponse: 'मैंने आपकी अपलोड की गई छवि को AI रोग पहचान से स्कैन किया है। यहाँ मेरा निदान है:',
+    userMsg: 'कृपया इस फसल छवि में रोगों का विश्लेषण करें।',
+    diagnosisTag: '🔬 AI निदान',
+    confidence: 'विश्वास',
+    diagnosisName: 'अल्टरनेरिया पत्ती झुलसा',
+    diagnosisDesc: 'पत्तियों पर भूरे गोलाकार धब्बे। प्याज, गाजर में सामान्य। मैनकोजेब 75% WP 2g/L पानी में मिलाकर, 3 सप्ताह तक साप्ताहिक छिड़काव करें।',
+    langSwitchMsg: `🌐 <strong>भाषा हिन्दी में सेट की गई।</strong> सभी संदेश अब हिंदी में हैं।`,
+  }
+};
+
+function applyUILanguage(lang) {
+  const s = uiStrings[lang];
+  // Nav
+  document.querySelector('.status-dot + span').textContent = s.aiOnline;
+  document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').textContent = s.langBtn;
+  document.getElementById('translateBtn').textContent = s.transBtn;
+  // Chat header buttons
+  const headerBtns = document.querySelectorAll('.chat-header > div:last-child .nav-btn');
+  if (headerBtns[0]) headerBtns[0].textContent = s.histBtn;
+  if (headerBtns[1]) headerBtns[1].textContent = s.transBtn;
+  // Chat header text
+  document.querySelector('.chat-title').textContent = s.chatTitle;
+  document.querySelector('.chat-subtitle').textContent = s.chatSubtitle;
+  // Upload
+  document.getElementById('imgBtn').innerHTML = s.uploadBtn;
+  document.querySelector('.preview-size').textContent = s.previewSize;
+  document.querySelector('.preview-send').textContent = s.analyzeBtn;
+  document.querySelector('.nav-btn.primary').textContent = s.newScan;
+  // Sidebar headers
+  document.querySelector('#panelLeft .sidebar-title').textContent = s.newsTitle;
+  document.querySelector('#panelLeft .tag-pill.active').textContent = s.liveTag;
+  // Translate modal
+  document.getElementById('transModalTitle').textContent = s.transModalTitle;
+  document.getElementById('translateNote').textContent = s.translateNote;
+  document.getElementById('transCloseBtn').textContent = s.transClose;
+  // Read aloud buttons
+  document.querySelectorAll('.read-aloud-btn:not(.speaking)').forEach(btn => {
+    btn.innerHTML = `<span class="speaker-icon">🔊</span> ${lang === 'hi' ? 'जोर से पढ़ें' : 'Read Aloud'}`;
+  });
+  // Bottom nav labels
+  const bnavBtns = document.querySelectorAll('.bottom-nav-btn');
+  if (bnavBtns[0]) bnavBtns[0].innerHTML = `<span class="bnav-icon">📰</span>${lang === 'hi' ? 'समाचार' : 'News'}`;
+  if (bnavBtns[1]) bnavBtns[1].innerHTML = `<span class="bnav-icon">🤖</span>${lang === 'hi' ? 'चैट' : 'Chat'}`;
+}
+
+function translateChatMessages(lang) {
+  const t = chatTranslations[lang];
+  // Translate all AI bubbles
+  const msgs = document.getElementById('chatMessages');
+  const wrappers = msgs.children;
+  let aiIdx = 0;
+  Array.from(wrappers).forEach(wrapper => {
+    const bubble = wrapper.querySelector('.msg-bubble');
+    if (!bubble) return;
+    const isUser = wrapper.querySelector('.msg.user');
+    const isAI = wrapper.querySelector('.msg.ai');
+    if (isUser) {
+      // Translate user messages
+      const textNode = bubble.childNodes[bubble.childNodes.length - 1];
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        textNode.textContent = t.userMsg;
+      } else {
+        // find last text content
+        const allText = bubble.innerHTML;
+        if (allText.includes('Please analyze') || allText.includes('विश्लेषण करें') || allText.includes('कृपया')) {
+          const imgPart = bubble.querySelector('.msg-image-preview');
+          bubble.innerHTML = '';
+          if (imgPart) bubble.appendChild(imgPart);
+          bubble.insertAdjacentText('beforeend', t.userMsg);
+        }
+      }
+    }
+    if (isAI) {
+      const diagCard = bubble.querySelector('.diagnosis-card');
+      // Translate diagnosis card if present
+      if (diagCard) {
+        diagCard.querySelector('.diagnosis-tag').textContent = t.diagnosisTag;
+        diagCard.querySelector('.diagnosis-name').textContent = t.diagnosisName;
+        diagCard.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc;
+        const confLabels = diagCard.querySelectorAll('.conf-label');
+        if (confLabels[0]) confLabels[0].textContent = t.confidence;
+      }
+      // Translate main AI text (first text node or innerHTML)
+      const rawInner = bubble.innerHTML;
+      if (aiIdx === 0) {
+        // Welcome message
+        const newHTML = t.welcome + (diagCard ? bubble.querySelector('.diagnosis-card').outerHTML : '');
+        bubble.innerHTML = newHTML;
+        if (diagCard) {
+          // Re-translate after re-insert
+          const dc2 = bubble.querySelector('.diagnosis-card');
+          if (dc2) {
+            dc2.querySelector('.diagnosis-tag').textContent = t.diagnosisTag;
+            dc2.querySelector('.diagnosis-name').textContent = t.diagnosisName;
+            dc2.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc;
+            const cLabels = dc2.querySelectorAll('.conf-label');
+            if (cLabels[0]) cLabels[0].textContent = t.confidence;
+          }
+        }
+      } else if (rawInner.includes("scanned") || rawInner.includes("स्कैन") || rawInner.includes("diagnosis") || rawInner.includes("निदान")) {
+        const dc = bubble.querySelector('.diagnosis-card');
+        bubble.innerHTML = t.imgResponse + (dc ? dc.outerHTML : '');
+        const dc2 = bubble.querySelector('.diagnosis-card');
+        if (dc2) {
+          dc2.querySelector('.diagnosis-tag').textContent = t.diagnosisTag;
+          dc2.querySelector('.diagnosis-name').textContent = t.diagnosisName;
+          dc2.querySelector('.diagnosis-detail').textContent = t.diagnosisDesc;
+          const cLabels = dc2.querySelectorAll('.conf-label');
+          if (cLabels[0]) cLabels[0].textContent = t.confidence;
+        }
+      } else if (rawInner.includes('Language set') || rawInner.includes('भाषा हिन्दी') || rawInner.includes('भाषा')) {
+        bubble.innerHTML = t.langSwitchMsg;
+      }
+      aiIdx++;
+    }
+  });
+}
+
+function setLanguage(lang) {
+  if (lang === currentLang) { closeModal('translateModal'); return; }
+  currentLang = lang;
+  // Update selection UI
+  document.getElementById('langEN').classList.toggle('selected', lang === 'en');
+  document.getElementById('langHI').classList.toggle('selected', lang === 'hi');
+  // Apply UI translations
+  applyUILanguage(lang);
+  translateChatMessages(lang);
+  // Append a language-switch notice message
+  appendAIMessage(chatTranslations[lang].langSwitchMsg);
+  closeModal('translateModal');
+}
+
+function openTranslate() {
+  // Mark current language as selected
+  document.getElementById('langEN').classList.toggle('selected', currentLang === 'en');
+  document.getElementById('langHI').classList.toggle('selected', currentLang === 'hi');
+  document.getElementById('transModalTitle').textContent = uiStrings[currentLang].transModalTitle;
+  document.getElementById('translateNote').textContent = uiStrings[currentLang].translateNote;
+  document.getElementById('transCloseBtn').textContent = uiStrings[currentLang].transClose;
+  openModal('translateModal');
+}
+
+// Also hook into the nav EN/हिन्दी button
+document.querySelector('.nav-right .nav-btn.outline:not(#newsNavBtn)').addEventListener('click', openTranslate);
 </script>
 </body>
-
 </html>

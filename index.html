@@ -536,6 +536,9 @@
   .lang-check { margin-left: auto; font-size: 1.1rem; color: var(--accent); opacity: 0; transition: opacity 0.2s; }
   .lang-option.selected .lang-check { opacity: 1; }
   .translate-note { font-size: 0.75rem; color: var(--muted); text-align:center; margin-top:10px; line-height:1.5; }
+  #langSearch:focus { border-color: var(--accent2); }
+  #langList::-webkit-scrollbar { width: 3px; }
+  #langList::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -653,23 +656,16 @@
 
 <!-- TRANSLATE MODAL -->
 <div class="modal-overlay" id="translateModal">
-  <div class="modal">
+  <div class="modal" style="max-width:520px;">
     <div class="modal-header">
       <div class="modal-title">🌍 <span id="transModalTitle">Select Language</span></div>
       <button class="modal-close" onclick="closeModal('translateModal')">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="lang-option" id="langEN" onclick="setLanguage('en')">
-        <span class="lang-flag">🇬🇧</span>
-        <div><div class="lang-name">English</div><div class="lang-native">English</div></div>
-        <span class="lang-check">✓</span>
-      </div>
-      <div class="lang-option" id="langHI" onclick="setLanguage('hi')">
-        <span class="lang-flag">🇮🇳</span>
-        <div><div class="lang-name">Hindi</div><div class="lang-native">हिन्दी</div></div>
-        <span class="lang-check">✓</span>
-      </div>
-      <div class="translate-note" id="translateNote">Switching language will translate the interface and all chat messages.</div>
+    <div class="modal-body" style="padding:12px 14px 6px;">
+      <input type="text" id="langSearch" placeholder="🔍 Search language..." oninput="filterLangs(this.value)"
+        style="width:100%;padding:9px 13px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;margin-bottom:10px;">
+      <div id="langList" style="max-height:420px;overflow-y:auto;"></div>
+      <div class="translate-note" id="translateNote">Switching language will translate the interface and chat messages.</div>
     </div>
     <div class="modal-footer">
       <button class="modal-action-btn" onclick="closeModal('translateModal')" id="transCloseBtn">Cancel</button>
@@ -1197,28 +1193,219 @@ function translateChatMessages(lang) {
   });
 }
 
+// ═══════════════════════════════════════
+// ALL LANGUAGES DATA
+// ═══════════════════════════════════════
+const allLanguages = [
+  // ── INDIAN LANGUAGES ──
+  { code:'hi',  flag:'🇮🇳', name:'Hindi',       native:'हिन्दी',      group:'Indian' },
+  { code:'mr',  flag:'🇮🇳', name:'Marathi',     native:'मराठी',       group:'Indian' },
+  { code:'pa',  flag:'🇮🇳', name:'Punjabi',     native:'ਪੰਜਾਬੀ',      group:'Indian' },
+  { code:'gu',  flag:'🇮🇳', name:'Gujarati',    native:'ગુજરાતી',     group:'Indian' },
+  { code:'bn',  flag:'🇮🇳', name:'Bengali',     native:'বাংলা',       group:'Indian' },
+  { code:'ta',  flag:'🇮🇳', name:'Tamil',       native:'தமிழ்',       group:'Indian' },
+  { code:'te',  flag:'🇮🇳', name:'Telugu',      native:'తెలుగు',      group:'Indian' },
+  { code:'kn',  flag:'🇮🇳', name:'Kannada',     native:'ಕನ್ನಡ',       group:'Indian' },
+  { code:'ml',  flag:'🇮🇳', name:'Malayalam',   native:'മലയാളം',      group:'Indian' },
+  { code:'or',  flag:'🇮🇳', name:'Odia',        native:'ଓଡ଼ିଆ',       group:'Indian' },
+  { code:'as',  flag:'🇮🇳', name:'Assamese',    native:'অসমীয়া',     group:'Indian' },
+  { code:'ur',  flag:'🇮🇳', name:'Urdu',        native:'اردو',        group:'Indian' },
+  { code:'ks',  flag:'🇮🇳', name:'Kashmiri',    native:'كٲشُر',       group:'Indian' },
+  { code:'sd',  flag:'🇮🇳', name:'Sindhi',      native:'سنڌي',        group:'Indian' },
+  { code:'sa',  flag:'🇮🇳', name:'Sanskrit',    native:'संस्कृतम्',   group:'Indian' },
+  { code:'ne',  flag:'🇳🇵', name:'Nepali',      native:'नेपाली',      group:'Indian' },
+  { code:'si',  flag:'🇱🇰', name:'Sinhala',     native:'සිංහල',       group:'Indian' },
+  { code:'mai', flag:'🇮🇳', name:'Maithili',    native:'मैथिली',      group:'Indian' },
+  { code:'kok', flag:'🇮🇳', name:'Konkani',     native:'कोंकणी',      group:'Indian' },
+  { code:'mni', flag:'🇮🇳', name:'Manipuri',    native:'মৈতৈলোন্',   group:'Indian' },
+  { code:'doi', flag:'🇮🇳', name:'Dogri',       native:'डोगरी',       group:'Indian' },
+  { code:'sat', flag:'🇮🇳', name:'Santali',     native:'ᱥᱟᱱᱛᱟᱲᱤ',   group:'Indian' },
+  { code:'brx', flag:'🇮🇳', name:'Bodo',        native:'बड़ो',         group:'Indian' },
+
+  // ── EUROPEAN LANGUAGES ──
+  { code:'en',  flag:'🇬🇧', name:'English',     native:'English',     group:'European' },
+  { code:'fr',  flag:'🇫🇷', name:'French',      native:'Français',    group:'European' },
+  { code:'de',  flag:'🇩🇪', name:'German',      native:'Deutsch',     group:'European' },
+  { code:'es',  flag:'🇪🇸', name:'Spanish',     native:'Español',     group:'European' },
+  { code:'pt',  flag:'🇵🇹', name:'Portuguese',  native:'Português',   group:'European' },
+  { code:'it',  flag:'🇮🇹', name:'Italian',     native:'Italiano',    group:'European' },
+  { code:'nl',  flag:'🇳🇱', name:'Dutch',       native:'Nederlands',  group:'European' },
+  { code:'ru',  flag:'🇷🇺', name:'Russian',     native:'Русский',     group:'European' },
+  { code:'pl',  flag:'🇵🇱', name:'Polish',      native:'Polski',      group:'European' },
+  { code:'uk',  flag:'🇺🇦', name:'Ukrainian',   native:'Українська',  group:'European' },
+  { code:'cs',  flag:'🇨🇿', name:'Czech',       native:'Čeština',     group:'European' },
+  { code:'sk',  flag:'🇸🇰', name:'Slovak',      native:'Slovenčina',  group:'European' },
+  { code:'ro',  flag:'🇷🇴', name:'Romanian',    native:'Română',      group:'European' },
+  { code:'hu',  flag:'🇭🇺', name:'Hungarian',   native:'Magyar',      group:'European' },
+  { code:'el',  flag:'🇬🇷', name:'Greek',       native:'Ελληνικά',    group:'European' },
+  { code:'sv',  flag:'🇸🇪', name:'Swedish',     native:'Svenska',     group:'European' },
+  { code:'no',  flag:'🇳🇴', name:'Norwegian',   native:'Norsk',       group:'European' },
+  { code:'da',  flag:'🇩🇰', name:'Danish',      native:'Dansk',       group:'European' },
+  { code:'fi',  flag:'🇫🇮', name:'Finnish',     native:'Suomi',       group:'European' },
+  { code:'bg',  flag:'🇧🇬', name:'Bulgarian',   native:'Български',   group:'European' },
+  { code:'hr',  flag:'🇭🇷', name:'Croatian',    native:'Hrvatski',    group:'European' },
+  { code:'sr',  flag:'🇷🇸', name:'Serbian',     native:'Српски',      group:'European' },
+  { code:'lt',  flag:'🇱🇹', name:'Lithuanian',  native:'Lietuvių',    group:'European' },
+  { code:'lv',  flag:'🇱🇻', name:'Latvian',     native:'Latviešu',    group:'European' },
+  { code:'et',  flag:'🇪🇪', name:'Estonian',    native:'Eesti',       group:'European' },
+  { code:'sl',  flag:'🇸🇮', name:'Slovenian',   native:'Slovenščina', group:'European' },
+  { code:'mk',  flag:'🇲🇰', name:'Macedonian',  native:'Македонски',  group:'European' },
+  { code:'sq',  flag:'🇦🇱', name:'Albanian',    native:'Shqip',       group:'European' },
+  { code:'ca',  flag:'🏳️', name:'Catalan',     native:'Català',      group:'European' },
+  { code:'gl',  flag:'🏳️', name:'Galician',    native:'Galego',      group:'European' },
+  { code:'eu',  flag:'🏳️', name:'Basque',      native:'Euskara',     group:'European' },
+  { code:'is',  flag:'🇮🇸', name:'Icelandic',   native:'Íslenska',    group:'European' },
+  { code:'ga',  flag:'🇮🇪', name:'Irish',       native:'Gaeilge',     group:'European' },
+  { code:'cy',  flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿', name:'Welsh',      native:'Cymraeg',     group:'European' },
+  { code:'mt',  flag:'🇲🇹', name:'Maltese',     native:'Malti',       group:'European' },
+  { code:'lb',  flag:'🇱🇺', name:'Luxembourgish',native:'Lëtzebuergesch',group:'European'},
+  { code:'be',  flag:'🇧🇾', name:'Belarusian',  native:'Беларуская',  group:'European' },
+
+  // ── EAST ASIAN ──
+  { code:'zh',  flag:'🇨🇳', name:'Chinese (Simplified)', native:'中文 (简体)', group:'East Asian' },
+  { code:'zh-TW',flag:'🇹🇼',name:'Chinese (Traditional)',native:'中文 (繁體)', group:'East Asian' },
+  { code:'ja',  flag:'🇯🇵', name:'Japanese',    native:'日本語',       group:'East Asian' },
+  { code:'ko',  flag:'🇰🇷', name:'Korean',      native:'한국어',       group:'East Asian' },
+  { code:'mn',  flag:'🇲🇳', name:'Mongolian',   native:'Монгол',      group:'East Asian' },
+  { code:'bo',  flag:'🏳️', name:'Tibetan',     native:'བོད་སྐད།',    group:'East Asian' },
+
+  // ── SOUTHEAST ASIAN ──
+  { code:'id',  flag:'🇮🇩', name:'Indonesian',  native:'Bahasa Indonesia', group:'Southeast Asian' },
+  { code:'ms',  flag:'🇲🇾', name:'Malay',       native:'Bahasa Melayu', group:'Southeast Asian' },
+  { code:'tl',  flag:'🇵🇭', name:'Filipino',    native:'Filipino',    group:'Southeast Asian' },
+  { code:'th',  flag:'🇹🇭', name:'Thai',        native:'ภาษาไทย',     group:'Southeast Asian' },
+  { code:'vi',  flag:'🇻🇳', name:'Vietnamese',  native:'Tiếng Việt',  group:'Southeast Asian' },
+  { code:'km',  flag:'🇰🇭', name:'Khmer',       native:'ភាសាខ្មែរ',   group:'Southeast Asian' },
+  { code:'lo',  flag:'🇱🇦', name:'Lao',         native:'ພາສາລາວ',     group:'Southeast Asian' },
+  { code:'my',  flag:'🇲🇲', name:'Burmese',     native:'မြန်မာဘာသာ', group:'Southeast Asian' },
+  { code:'jv',  flag:'🇮🇩', name:'Javanese',    native:'Basa Jawa',   group:'Southeast Asian' },
+  { code:'su',  flag:'🇮🇩', name:'Sundanese',   native:'Basa Sunda',  group:'Southeast Asian' },
+
+  // ── MIDDLE EASTERN & CENTRAL ASIAN ──
+  { code:'ar',  flag:'🇸🇦', name:'Arabic',      native:'العربية',     group:'Middle Eastern' },
+  { code:'fa',  flag:'🇮🇷', name:'Persian',     native:'فارسی',       group:'Middle Eastern' },
+  { code:'tr',  flag:'🇹🇷', name:'Turkish',     native:'Türkçe',      group:'Middle Eastern' },
+  { code:'he',  flag:'🇮🇱', name:'Hebrew',      native:'עברית',       group:'Middle Eastern' },
+  { code:'az',  flag:'🇦🇿', name:'Azerbaijani', native:'Azərbaycan',  group:'Middle Eastern' },
+  { code:'kk',  flag:'🇰🇿', name:'Kazakh',      native:'Қазақ',       group:'Middle Eastern' },
+  { code:'uz',  flag:'🇺🇿', name:'Uzbek',       native:'Oʻzbek',      group:'Middle Eastern' },
+  { code:'tk',  flag:'🇹🇲', name:'Turkmen',     native:'Türkmen',     group:'Middle Eastern' },
+  { code:'ky',  flag:'🇰🇬', name:'Kyrgyz',      native:'Кыргыз',      group:'Middle Eastern' },
+  { code:'tg',  flag:'🇹🇯', name:'Tajik',       native:'Тоҷикӣ',      group:'Middle Eastern' },
+  { code:'ps',  flag:'🇦🇫', name:'Pashto',      native:'پښتو',        group:'Middle Eastern' },
+  { code:'ku',  flag:'🏳️', name:'Kurdish',     native:'Kurdî',       group:'Middle Eastern' },
+  { code:'hy',  flag:'🇦🇲', name:'Armenian',    native:'Հայերեն',     group:'Middle Eastern' },
+  { code:'ka',  flag:'🇬🇪', name:'Georgian',    native:'ქართული',     group:'Middle Eastern' },
+
+  // ── AFRICAN ──
+  { code:'sw',  flag:'🌍', name:'Swahili',     native:'Kiswahili',   group:'African' },
+  { code:'am',  flag:'🇪🇹', name:'Amharic',     native:'አማርኛ',       group:'African' },
+  { code:'ha',  flag:'🌍', name:'Hausa',       native:'Hausa',       group:'African' },
+  { code:'yo',  flag:'🌍', name:'Yoruba',      native:'Yorùbá',      group:'African' },
+  { code:'ig',  flag:'🌍', name:'Igbo',        native:'Igbo',        group:'African' },
+  { code:'zu',  flag:'🇿🇦', name:'Zulu',        native:'isiZulu',     group:'African' },
+  { code:'xh',  flag:'🇿🇦', name:'Xhosa',       native:'isiXhosa',    group:'African' },
+  { code:'af',  flag:'🇿🇦', name:'Afrikaans',   native:'Afrikaans',   group:'African' },
+  { code:'so',  flag:'🇸🇴', name:'Somali',      native:'Soomaali',    group:'African' },
+  { code:'om',  flag:'🌍', name:'Oromo',       native:'Afaan Oromoo',group:'African' },
+  { code:'rw',  flag:'🇷🇼', name:'Kinyarwanda', native:'Kinyarwanda', group:'African' },
+  { code:'mg',  flag:'🇲🇬', name:'Malagasy',    native:'Malagasy',    group:'African' },
+  { code:'sn',  flag:'🇿🇼', name:'Shona',       native:'Shona',       group:'African' },
+  { code:'st',  flag:'🇱🇸', name:'Sotho',       native:'Sesotho',     group:'African' },
+  { code:'ny',  flag:'🇲🇼', name:'Chichewa',    native:'Chichewa',    group:'African' },
+
+  // ── AMERICAS ──
+  { code:'pt-BR',flag:'🇧🇷',name:'Portuguese (Brazil)',native:'Português (Brasil)',group:'Americas'},
+  { code:'es-MX',flag:'🇲🇽',name:'Spanish (Mexico)',native:'Español (México)',group:'Americas'},
+  { code:'qu',  flag:'🇵🇪', name:'Quechua',     native:'Runa Simi',   group:'Americas' },
+  { code:'gu-GT',flag:'🇬🇹',name:'Guatemalan Spanish',native:'Español (Guatemala)',group:'Americas'},
+  { code:'ht',  flag:'🇭🇹', name:'Haitian Creole',native:'Kreyòl ayisyen',group:'Americas'},
+
+  // ── PACIFIC ──
+  { code:'haw', flag:'🌺', name:'Hawaiian',    native:'ʻŌlelo Hawaiʻi',group:'Pacific'},
+  { code:'mi',  flag:'🇳🇿', name:'Māori',       native:'Te Reo Māori', group:'Pacific' },
+  { code:'sm',  flag:'🇼🇸', name:'Samoan',      native:'Gagana Samoa', group:'Pacific' },
+  { code:'fj',  flag:'🇫🇯', name:'Fijian',      native:'Vosa Vakaviti',group:'Pacific' },
+
+  // ── CONSTRUCTED / CLASSICAL ──
+  { code:'eo',  flag:'🌐', name:'Esperanto',   native:'Esperanto',   group:'Other' },
+  { code:'la',  flag:'🏛️', name:'Latin',       native:'Latina',      group:'Other' },
+];
+
+// Full UI strings only for EN and HI — all others get a "switched" notice
+const uiStringsFull = {
+  en: uiStrings.en,
+  hi: uiStrings.hi
+};
+
+function renderLangList(filter='') {
+  const list = document.getElementById('langList');
+  const q = filter.toLowerCase();
+  const filtered = q ? allLanguages.filter(l =>
+    l.name.toLowerCase().includes(q) || l.native.toLowerCase().includes(q) || l.code.toLowerCase().includes(q)
+  ) : allLanguages;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:0.85rem;">No language found</div>`;
+    return;
+  }
+
+  // Group them
+  const groups = q ? {'Results': filtered} : filtered.reduce((acc, l) => {
+    acc[l.group] = acc[l.group] || [];
+    acc[l.group].push(l);
+    return acc;
+  }, {});
+
+  const groupOrder = ['Indian','European','East Asian','Southeast Asian','Middle Eastern','African','Americas','Pacific','Other','Results'];
+
+  list.innerHTML = groupOrder.filter(g => groups[g]).map(g => `
+    <div style="font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:8px 4px 5px;">${g}</div>
+    ${groups[g].map(l => `
+      <div class="lang-option ${currentLang === l.code ? 'selected' : ''}" onclick="setLanguage('${l.code}')" id="lang_${l.code.replace('-','_')}">
+        <span class="lang-flag" style="font-size:1.4rem;">${l.flag}</span>
+        <div><div class="lang-name">${l.name}</div><div class="lang-native">${l.native}</div></div>
+        <span class="lang-check">✓</span>
+      </div>`).join('')}
+  `).join('');
+}
+
+function filterLangs(val) { renderLangList(val); }
+
 function setLanguage(lang) {
   if (lang === currentLang) { closeModal('translateModal'); return; }
+  const prev = currentLang;
   currentLang = lang;
-  // Update selection UI
-  document.getElementById('langEN').classList.toggle('selected', lang === 'en');
-  document.getElementById('langHI').classList.toggle('selected', lang === 'hi');
-  // Apply UI translations
-  applyUILanguage(lang);
-  translateChatMessages(lang);
-  // Append a language-switch notice message
-  appendAIMessage(chatTranslations[lang].langSwitchMsg);
+
+  const langObj = allLanguages.find(l => l.code === lang) || { name: lang, native: lang, flag: '🌐' };
+
+  // Full UI translation only for EN and HI
+  if (uiStrings[lang]) {
+    applyUILanguage(lang);
+    translateChatMessages(lang);
+    appendAIMessage(chatTranslations[lang].langSwitchMsg);
+  } else {
+    // For all other languages: just show a notice in chat, keep UI in previous lang (or EN)
+    const uiLang = uiStrings[prev] ? prev : 'en';
+    applyUILanguage(uiLang);
+    appendAIMessage(`🌐 <strong>Language set to ${langObj.flag} ${langObj.name} (${langObj.native}).</strong><br>Interface labels stay in ${uiStrings[uiLang].chatTitle === 'Fasal AI Assistant' ? 'English' : 'Hindi'}. Future AI responses will be in ${langObj.name}.`);
+  }
+
   closeModal('translateModal');
 }
 
 function openTranslate() {
-  // Mark current language as selected
-  document.getElementById('langEN').classList.toggle('selected', currentLang === 'en');
-  document.getElementById('langHI').classList.toggle('selected', currentLang === 'hi');
-  document.getElementById('transModalTitle').textContent = uiStrings[currentLang].transModalTitle;
-  document.getElementById('translateNote').textContent = uiStrings[currentLang].translateNote;
-  document.getElementById('transCloseBtn').textContent = uiStrings[currentLang].transClose;
+  document.getElementById('langSearch').value = '';
+  renderLangList('');
+  document.getElementById('transModalTitle').textContent = uiStrings[currentLang] ? uiStrings[currentLang].transModalTitle : 'Select Language';
+  document.getElementById('translateNote').textContent = uiStrings[currentLang] ? uiStrings[currentLang].translateNote : 'Select a language for the interface.';
+  document.getElementById('transCloseBtn').textContent = uiStrings[currentLang] ? uiStrings[currentLang].transClose : 'Cancel';
   openModal('translateModal');
+  // Scroll selected into view after render
+  setTimeout(() => {
+    const sel = document.querySelector('.lang-option.selected');
+    if (sel) sel.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, 50);
 }
 
 // Also hook into the nav EN/हिन्दी button
